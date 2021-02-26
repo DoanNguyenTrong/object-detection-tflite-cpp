@@ -202,16 +202,15 @@ main(int argc, char const * argv[]) {
   if (status != kTfLiteOk) {
     std::cerr << "Failed to allocate the memory for tensors." << std::endl;
     return -1;
-  }else{
-    std::cout << "Done!!\n";
   }
 
   std::cout << cv::getBuildInformation() << std::endl;
 
   // @doan 20210226: gstreamer "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080"
-  std::string vid_conf = "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080";
-  cv::VideoCapture cap(0);
-  // cv::VideoCapture cap(vid_conf, CAP_GSTREAMER);
+  const char *pipeline = "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080";
+  
+  // cv::VideoCapture cap(0);
+  cv::VideoCapture cap(pipeline, 0);
   if (!cap.isOpened()) {
     std::cerr << "Failed to open VideoCapture." << std::endl;
     return -1;
