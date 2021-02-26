@@ -134,8 +134,8 @@ int
 main(int argc, char const * argv[]) {
   
   // @doan 20210226: change file paths
-  std::string modelfile = "/models/mobilenet_v1_1.0_224/mobilenet_quant_v1_224.tflite";
-  std::string labelfile = "/models/mobilenet_v1_1.0_224/labels.txt";
+  std::string modelfile = "models/mobilenet_v1_1.0_224/mobilenet_quant_v1_224.tflite";
+  std::string labelfile = "models/mobilenet_v1_1.0_224/labels.txt";
 
   if (argc == 3) {
     modelfile = argv[1];
@@ -153,9 +153,20 @@ main(int argc, char const * argv[]) {
   
   std::cout << "Loading model from file: " << modelfile << std::endl;
   
-  // @doan 20210226: check for rexistance
-  fs::exists(modelfile);
-  fs::exists(labelfile);
+  // @doan 20210226: check for existance
+  if (fs::exists(modelfile)){
+    std::cout << modelfile << " exists!\n";
+  }
+  else{
+    std::cerr <<  modelfile << "inexist!" << std::endl;
+  }
+  if (fs::exists(labelfile)){
+    std::cout << labelfile << " exists!\n";
+  }
+  else{
+    std::cerr <<  labelfile << "inexist!" << std::endl;
+  }
+  
 
 
   tflite::StderrReporter error_reporter;
