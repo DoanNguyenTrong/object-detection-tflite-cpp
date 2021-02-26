@@ -126,16 +126,23 @@ main(int argc, char const * argv[]) {
     return -1;
   }
   TfLiteStatus status;
+
+  
   std::unique_ptr<tflite::FlatBufferModel> model;
   std::unique_ptr<tflite::Interpreter> interpreter;
   std::cout << "Loading model: " << modelfile << std::endl;
-  model = tflite::FlatBufferModel::BuildFromFile(modelfile.c_str());
+
+  tflite::StderrReporter error_reporter;
+  model = tflite::FlatBufferModel::BuildFromFile(modelfile.c_str(), &error_reporter);
   if (!model) {
     std::cerr << "Failed to load the model." << std::endl;
     return -1;
   }
+
+  
   tflite::ops::builtin::BuiltinOpResolver resolver;
   tflite::InterpreterBuilder(*model, resolver)(&interpreter);
+  
   status = interpreter->AllocateTensors();
 
   if (status != kTfLiteOk) {
