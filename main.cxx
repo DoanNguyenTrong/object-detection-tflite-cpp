@@ -210,8 +210,8 @@ main(int argc, char const * argv[]) {
 
   // @doan 20210226: gstreamer "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080"
   std::string vid_conf = "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080";
-  // cv::VideoCapture cap(0);
-  cv::VideoCapture cap(vid_conf, CAP_GSTREAMER);
+  cv::VideoCapture cap(0);
+  // cv::VideoCapture cap(vid_conf, CAP_GSTREAMER);
   if (!cap.isOpened()) {
     std::cerr << "Failed to open VideoCapture." << std::endl;
     return -1;
