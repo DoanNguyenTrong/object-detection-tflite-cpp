@@ -23,8 +23,8 @@ import time
 
 import numpy as np
 from PIL import Image
-import tensorflow as tf # TF2
-
+# import tensorflow as tf # TF2
+import tflite_runtime.interpreter as tflite
 
 def load_labels(filename):
   with open(filename, 'r') as f:
@@ -60,7 +60,8 @@ if __name__ == '__main__':
       '--num_threads', default=1, type=int, help='number of threads')
   args = parser.parse_args()
 
-  interpreter = tf.lite.Interpreter(model_path=args.model_file)
+  # interpreter = tf.lite.Interpreter(model_path=args.model_file)
+  interpreter = tflite.Interpreter(model_path=args.model_file)
   interpreter.allocate_tensors()
 
   input_details = interpreter.get_input_details()
