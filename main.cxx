@@ -14,6 +14,23 @@
 #include <freetype/freetype.h>
 #include <freetype/ftoutln.h>
 
+
+#ifndef __has_include
+  static_assert(false, "__has_include not supported");
+#else
+#  if __has_include(<filesystem>)
+#    include <filesystem>
+     namespace fs = std::filesystem;
+#  elif __has_include(<experimental/filesystem>)
+#    include <experimental/filesystem>
+     namespace fs = std::experimental::filesystem;
+#  elif __has_include(<boost/filesystem.hpp>)
+#    include <boost/filesystem.hpp>
+     namespace fs = boost::filesystem;
+#  endif
+#endif
+
+
 class ft_renderer {
 private:
   FT_Library lib_;
@@ -137,8 +154,8 @@ main(int argc, char const * argv[]) {
   std::cout << "Loading model from file: " << modelfile << std::endl;
   
   // @doan 20210226: check for rexistance
-  std::filesystem::exists(modelfile);
-  std::filesystem::exists(labelfile);
+  fs::exists(modelfile);
+  fs::exists(labelfile);
 
 
   tflite::StderrReporter error_reporter;
