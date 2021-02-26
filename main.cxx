@@ -30,7 +30,7 @@
 #  endif
 #endif
 
-
+// To put text to image
 class ft_renderer {
 private:
   FT_Library lib_;
@@ -130,6 +130,7 @@ fill(T *in, cv::Mat& src) {
         in[n++] = src.data[y * src.step + x * ne + c];
 }
 
+
 int
 main(int argc, char const * argv[]) {
   
@@ -145,66 +146,79 @@ main(int argc, char const * argv[]) {
     std::cerr << "Usage of " << argv[0] << " [modelfile] [labelfile]" << std::endl;
     return -1;
   }
-  TfLiteStatus status;
-
-  
-  std::unique_ptr<tflite::FlatBufferModel> model;
-  std::unique_ptr<tflite::Interpreter> interpreter;
-  
-  std::cout << "Loading model from file: " << modelfile << std::endl;
   
   // @doan 20210226: check for existance
   if (fs::exists(modelfile)){
-    std::cout << modelfile << " exists!\n";
+    std::cout << "EXISTS: "<< modelfile << std::endl;
   }
   else{
-    std::cerr <<  modelfile << "inexist!" << std::endl;
+    std::cout << "INEXISTS: "<< modelfile << std::endl;
+    return -1;
   }
   if (fs::exists(labelfile)){
-    std::cout << labelfile << " exists!\n";
+    std::cout << "EXISTS: "<< labelfile << std::endl;
   }
   else{
-    std::cerr <<  labelfile << "inexist!" << std::endl;
+    std::cout << "INEXISTS: "<< labelfile << std::endl;
+    return -1;
   }
+
+
+  TfLiteStatus                              status;
+  std::unique_ptr<tflite::FlatBufferModel>  model;
+  std::unique_ptr<tflite::Interpreter>      interpreter;
+  tflite::StderrReporter                    error_reporter;
   
-
-
-  tflite::StderrReporter error_reporter;
+  std::cout << "Loading: " << modelfile << std::endl;
   model = tflite::FlatBufferModel::BuildFromFile(modelfile.c_str(), &error_reporter);
   if (!model) {
     std::cerr << "Failed to load the model." << std::endl;
     return -1;
+  }else{
+    std::cout << "Done!!\n";
   }
 
-  
-  tflite::ops::builtin::BuiltinOpResolver resolver;
-  tflite::InterpreterBuilder(*model, resolver)(&interpreter);
-  
-  status = interpreter->AllocateTensors();
-
-  if (status != kTfLiteOk) {
-    std::cerr << "Failed to allocate the memory for tensors." << std::endl;
-    return -1;
-  }
-
-  cv::VideoCapture cap(0);
-  if (!cap.isOpened()) {
-    std::cerr << "Failed to open VideoCapture." << std::endl;
-    return -1;
-  }
-
-  std::cout << "Loading labels from file: " << labelfile << std::endl;
+  std::cout << "Loading: " << labelfile << std::endl;
   std::ifstream file(labelfile);
   if (!file) {
     std::cerr << "Failed to read " << labelfile << "." << std::endl;
     return -1;
+  }else{
+    std::cout << "Done!!\n";
   }
-  std::vector<std::string> labels;
-  std::string line;
+  std::vector<std::string>  labels;
+  std::string               line;
   while (std::getline(file, line))
     labels.push_back(line);
   while (labels.size() % 16)
     labels.emplace_back();
+  
+
+
+  tflite::ops::builtin::BuiltinOpResolver resolver;
+  tflite::InterpreterBuilder(*model, resolver)(&interpreter);
+  
+  status = interpreter->AllocateTensors();
+  if (status != kTfLiteOk) {
+    std::cerr << "Failed to allocate the memory for tensors." << std::endl;
+    return -1;
+  }else{
+    std::cout << "Done!!\n";
+  }
+
+
+  // @doan 20210226: gstreamer "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080"
+  std::string vid_conf = "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080";
+  // cv::VideoCapture cap(0);
+  cv::VideoCapture cap(vid_conf, CAP_GSTREAMER);
+  if (!cap.isOpened()) {
+    std::cerr << "Failed to open VideoCapture." << std::endl;
+    return -1;
+  }else{
+    std::cout << "Done!!\n";
+  }
+
+  
 
   cv::Scalar white(255, 255, 255);
   int input = interpreter->inputs()[0];
