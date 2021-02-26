@@ -19,6 +19,7 @@ import numpy as np
 import sys
 import glob
 import importlib.util
+import time
 
 # Define and parse input arguments
 parser = argparse.ArgumentParser()
@@ -144,7 +145,10 @@ for image_path in images:
 
     # Perform the actual detection by running the model with the image as input
     interpreter.set_tensor(input_details[0]['index'],input_data)
+    
+    start_time = time.time()
     interpreter.invoke()
+    stop_time = time.time()
 
     # Retrieve detection results
     boxes = interpreter.get_tensor(output_details[0]['index'])[0] # Bounding box coordinates of detected objects
@@ -155,6 +159,7 @@ for image_path in images:
     for i, class_name in zip(scores, classes):
         print(i, labels[int(class_name)])
 
+    print('time: {:.3f}ms'.format((stop_time - start_time) * 1000))
     # Loop over all detections and draw detection box if confidence is above minimum threshold
     # for i in range(len(scores)):
     #     if ((scores[i] > min_conf_threshold) and (scores[i] <= 1.0)):
@@ -180,8 +185,8 @@ for image_path in images:
     # cv2.imshow('Object detector', image)
 
     # Press any key to continue to next image, or press 'q' to quit
-    if cv2.waitKey(0) == ord('q'):
-        break
+    # if cv2.waitKey(0) == ord('q'):
+    #     break
 
 # Clean up
-cv2.destroyAllWindows()
+# cv2.destroyAllWindows()
