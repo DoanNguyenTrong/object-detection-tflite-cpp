@@ -206,6 +206,7 @@ main(int argc, char const * argv[]) {
     std::cout << "Done!!\n";
   }
 
+  std::cout << cv::getBuildInformation() << std::endl;
 
   // @doan 20210226: gstreamer "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080"
   std::string vid_conf = "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080";
