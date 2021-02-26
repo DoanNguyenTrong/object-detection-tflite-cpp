@@ -32,4 +32,4 @@ target_link_libraries(${PROJECT_NAME}
     pthread
     dl
 )
-target_link_libraries(${PROJECT_NAME} TFlite_LIB ${CMAKE_DL_LIBS} rt)
+target_link_libraries(${PROJECT_NAME} TFlite_LIB ${CMAKE_DL_LIBS} stdc++fs rt)

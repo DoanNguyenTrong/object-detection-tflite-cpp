@@ -115,12 +115,15 @@ fill(T *in, cv::Mat& src) {
 
 int
 main(int argc, char const * argv[]) {
-  std::string modelfile = "mobilenet_quant_v1_224.tflite";
-  std::string labelfile = "labels.txt";
+  
+  // @doan 20210226: change file paths
+  std::string modelfile = "/models/mobilenet_v1_1.0_224/mobilenet_quant_v1_224.tflite";
+  std::string labelfile = "/models/mobilenet_v1_1.0_224/labels.txt";
 
   if (argc == 3) {
     modelfile = argv[1];
     labelfile = argv[2];
+    
   } else if (argc != 1) {
     std::cerr << "Usage of " << argv[0] << " [modelfile] [labelfile]" << std::endl;
     return -1;
@@ -130,7 +133,13 @@ main(int argc, char const * argv[]) {
   
   std::unique_ptr<tflite::FlatBufferModel> model;
   std::unique_ptr<tflite::Interpreter> interpreter;
-  std::cout << "Loading model: " << modelfile << std::endl;
+  
+  std::cout << "Loading model from file: " << modelfile << std::endl;
+  
+  // @doan 20210226: check for rexistance
+  std::filesystem::exists(modelfile);
+  std::filesystem::exists(labelfile);
+
 
   tflite::StderrReporter error_reporter;
   model = tflite::FlatBufferModel::BuildFromFile(modelfile.c_str(), &error_reporter);
@@ -156,7 +165,7 @@ main(int argc, char const * argv[]) {
     return -1;
   }
 
-  std::cout << "Loading labels: " << labelfile << std::endl;
+  std::cout << "Loading labels from file: " << labelfile << std::endl;
   std::ifstream file(labelfile);
   if (!file) {
     std::cerr << "Failed to read " << labelfile << "." << std::endl;
