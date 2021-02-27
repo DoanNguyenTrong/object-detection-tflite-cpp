@@ -16,7 +16,7 @@
 
 
 // doan 202010227: add hexagon delegate
-// #include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
+#include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
 
 
 #ifndef __has_include
