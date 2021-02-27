@@ -15,6 +15,7 @@
 #include <freetype/ftoutln.h>
 
 
+
 #ifndef __has_include
   static_assert(false, "__has_include not supported");
 #else
@@ -204,21 +205,6 @@ main(int argc, char const * argv[]) {
     return -1;
   }
 
-  std::cout << cv::getBuildInformation() << std::endl;
-
-  // @doan 20210226: gstreamer "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080"
-  const char *pipeline = "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080";
-  
-  // cv::VideoCapture cap(0);
-  cv::VideoCapture cap(pipeline, 0);
-  if (!cap.isOpened()) {
-    std::cerr << "Failed to open VideoCapture." << std::endl;
-    return -1;
-  }else{
-    std::cout << "Done!!\n";
-  }
-
-  
 
   cv::Scalar white(255, 255, 255);
   int input = interpreter->inputs()[0];
@@ -250,6 +236,21 @@ main(int argc, char const * argv[]) {
       (std::istreambuf_iterator<char>(fontfile)),
       std::istreambuf_iterator<char>());
   ft_renderer ftw(fontdata);
+  
+  
+  
+  std::cout << cv::getBuildInformation() << std::endl;
+
+  // @doan 20210226: gstreamer "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080"
+  const char *pipeline = "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080";
+  // cv::VideoCapture cap(0);
+  cv::VideoCapture cap(pipeline, 0);
+  if (!cap.isOpened()) {
+    std::cerr << "Failed to open VideoCapture." << std::endl;
+    return -1;
+  }else{
+    std::cout << "Done!!\n";
+  }
 
   while (true) {
     cv::Mat frame;

@@ -5,7 +5,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lX11 -ldl -lrt")
 
 message(STATUS "optional:-std=c++17")
 
-set(OpenCV_DIR "/root/doan/test_ws/opencv-wayland/build/")
+set(OpenCV_DIR "/root/doan/test_ws/opencv-master/build")
+
 include_directories(/usr/include/freetype2/)
 include_directories(/root/doan/test_ws/tensorflow/)
 include_directories(/root/doan/test_ws/tensorflow/tensorflow/lite/tools/make/downloads/flatbuffers/include)
