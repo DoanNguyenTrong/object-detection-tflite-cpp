@@ -248,7 +248,7 @@ main(int argc, char const * argv[]) {
   auto delegate = TfLiteHexagonDelegateCreate(params);
 
   // 
-  auto delegateStatus = interpreter->ModifyGraphWithDelegate(params);
+  auto delegateStatus = interpreter->ModifyGraphWithDelegate(delegate);
   
   if (delegateStatus == kTfLiteDelegateError){
     std::cerr << "Failed to use Hexagon Delegate" << std::endl;
