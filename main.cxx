@@ -16,7 +16,7 @@
 
 
 // doan 202010227: add hexagon delegate
-#include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
+// #include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
 
 
 #ifndef __has_include
@@ -248,9 +248,9 @@ main(int argc, char const * argv[]) {
   auto delegate = TfLiteHexagonDelegateCreate(params);
 
   // 
-  auto status = interpreter->ModifyGraphWithDelegate(params);
+  auto delegateStatus = interpreter->ModifyGraphWithDelegate(params);
   
-  if (status == kTfLiteDelegateError){
+  if (delegateStatus == kTfLiteDelegateError){
     std::cerr << "Failed to use Hexagon Delegate" << std::endl;
     return -1;
   }
@@ -352,7 +352,7 @@ main(int argc, char const * argv[]) {
   }
   cv::destroyAllWindows();
   // Do any needed cleanup and delete 'delegate'.
-  TfLiteHexagonDelegateDelete( params);
+  TfLiteHexagonDelegateDelete( delegate);
   TfLiteHexagonTearDown();
   return 0;
 }
