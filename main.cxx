@@ -227,6 +227,7 @@ main(int argc, char const * argv[]) {
   interpreter->SetNumThreads(4);
   interpreter->UseNNAPI(1);
 
+  std::cout << "Loading: mplus-1c-thin.ttf" << std::endl;
   std::ifstream fontfile("mplus-1c-thin.ttf", std::ios::in | std::ios::binary);
   if (!fontfile) {
     std::cerr << "Failed to read font file" << std::endl;
