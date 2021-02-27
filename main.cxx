@@ -15,6 +15,9 @@
 #include <freetype/ftoutln.h>
 
 
+// doan 202010227: add hexagon delegate
+#include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
+
 
 #ifndef __has_include
   static_assert(false, "__has_include not supported");
@@ -217,17 +220,41 @@ main(int argc, char const * argv[]) {
   int wanted_channels = dims->data[3];
   int wanted_type = interpreter->tensor(input)->type;
 
+
+  // Input of the interpreter
   uint8_t *in8 = nullptr;
   float *in16 = nullptr;
 
   if (wanted_type == kTfLiteFloat32) {
+    std::cout << "Model has not been quantized! Could not use Hexagon Delegate!\n";
     in16 = interpreter->typed_tensor<float>(input);
   } else if (wanted_type == kTfLiteUInt8) {
+    std::cout << "Quantized model! Can use Hexagon Delegate!\n";
     in8 = interpreter->typed_tensor<uint8_t>(input);
   }
 
+  // doan 202010227: add hexagon delegate
   interpreter->SetNumThreads(4);
-  interpreter->UseNNAPI(1);
+  // interpreter->UseNNAPI(1);
+
+  // doan 20210227: Hexagon V66Q
+  // https://developer.qualcomm.com/qualcomm-robotics-rb5-kit/software-reference-manual/
+  TfLiteHexagonDelegateOptions * params = {0};
+  
+  // Initializes the DSP connection.
+  const char* path = "hexagon/hexagon_nn_skel_v1.20.0.1/";
+  TfLiteHexagonInitWithPath(path);
+  
+  auto delegate = TfLiteHexagonDelegateCreate(params);
+
+  // 
+  auto status = interpreter->ModifyGraphWithDelegate(params);
+  
+  if (status == kTfLiteDelegateError){
+    std::cerr << "Failed to use Hexagon Delegate" << std::endl;
+    return -1;
+  }
+
 
   std::cout << "Loading: mplus-1c-thin.ttf" << std::endl;
   std::ifstream fontfile("mplus-1c-thin.ttf", std::ios::in | std::ios::binary);
@@ -246,8 +273,8 @@ main(int argc, char const * argv[]) {
 
   // @doan 20210226: gstreamer "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080"
   const char *pipeline = "v4l2src ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
-  // cv::VideoCapture cap(0);
-  cv::VideoCapture cap(pipeline, CAP_GSTREAMER);
+  cv::VideoCapture cap(0);
+  // cv::VideoCapture cap(pipeline, CAP_GSTREAMER);
   if (!cap.isOpened()) {
     std::cerr << "Failed to open VideoCapture." << std::endl;
     return -1;
@@ -265,19 +292,21 @@ main(int argc, char const * argv[]) {
     cv::resize(frame, resized, resized.size(), cv::INTER_CUBIC);
 
     int n = 0;
-
+    // Overwrite input of the NN
     if (wanted_type == kTfLiteFloat32) {
       fill(in16, resized);
     } else if (wanted_type == kTfLiteUInt8) {
       fill(in8, resized);
     }
 
+    // Inference
     status = interpreter->Invoke();
     if (status != kTfLiteOk) {
       cv::imshow("window", frame);
       continue;
     }
 
+    // Extract output
     int output = interpreter->outputs()[0];
     TfLiteIntArray* output_dims = interpreter->tensor(output)->dims;
     auto output_size = output_dims->data[output_dims->size - 1];
@@ -308,6 +337,7 @@ main(int argc, char const * argv[]) {
       }
     );
 
+    // Put text to frame
     n = 0;
     for (const auto& result : results) {
       std::stringstream ss;
@@ -321,6 +351,9 @@ main(int argc, char const * argv[]) {
     cv::imshow("window", frame);
   }
   cv::destroyAllWindows();
+  // Do any needed cleanup and delete 'delegate'.
+  TfLiteHexagonDelegateDelete( params);
+  TfLiteHexagonTearDown();
   return 0;
 }
 
