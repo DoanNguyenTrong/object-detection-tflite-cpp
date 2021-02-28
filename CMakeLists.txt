@@ -22,7 +22,7 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 ADD_LIBRARY(TFlite_LIB STATIC IMPORTED)
 SET_TARGET_PROPERTIES(TFlite_LIB PROPERTIES
-IMPORTED_LOCATION /root/doan/test_ws/tensorflow/tensorflow/lite/tools/make/gen/aarch64_armv8-a/lib/libtensorflow-lite.a)
+IMPORTED_LOCATION /root/doan/test_ws/tensorflow/tensorflow/lite/tools/make/gen/linux_aarch64/lib/libtensorflow-lite.a)
 
 
 set(SOURCE_FILES main.cxx)
