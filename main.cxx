@@ -16,7 +16,7 @@
 
 
 // doan 202010227: add hexagon delegate
-#include "hexagon/hexagon/hexagon_delegate.h"
+#include <hexagon_delegate.h>
 
 
 #ifndef __has_include

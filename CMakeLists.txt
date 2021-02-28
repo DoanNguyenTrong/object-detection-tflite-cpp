@@ -11,6 +11,7 @@ include_directories(/usr/include/freetype2/)
 include_directories(/root/doan/test_ws/tensorflow/)
 include_directories(/root/doan/test_ws/tensorflow/tensorflow/lite/tools/make/downloads/flatbuffers/include)
 
+include_directories(/root/doan/test_ws/object-detection-rb5/hexagon/hexagon/)
 
 find_package(OpenCV REQUIRED)
 message(STATUS "OpenCV library status:")
