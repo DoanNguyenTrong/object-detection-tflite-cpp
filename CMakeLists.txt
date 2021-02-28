@@ -22,7 +22,7 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 ADD_LIBRARY(TFlite_LIB STATIC IMPORTED)
 SET_TARGET_PROPERTIES(TFlite_LIB PROPERTIES
-IMPORTED_LOCATION tflite/libtensorflow-lite.a)
+IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libtensorflow-lite.a)
 
 
 set(SOURCE_FILES main.cxx)
