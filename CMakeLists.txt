@@ -5,13 +5,14 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lX11 -ldl -lrt")
 
 message(STATUS "optional:-std=c++17")
 
+
+
 set(OpenCV_DIR "/root/doan/test_ws/opencv-master/build")
 
 include_directories(/usr/include/freetype2/)
 include_directories(/root/doan/test_ws/tensorflow/)
 include_directories(/root/doan/test_ws/tensorflow/tensorflow/lite/tools/make/downloads/flatbuffers/include)
 
-include_directories(/root/doan/test_ws/object-detection-rb5/hexagon/hexagon/)
 
 find_package(OpenCV REQUIRED)
 message(STATUS "OpenCV library status:")
@@ -23,7 +24,7 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 ADD_LIBRARY(TFlite_LIB STATIC IMPORTED)
 SET_TARGET_PROPERTIES(TFlite_LIB PROPERTIES
-IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libtensorflow-lite.a)
+IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libtensorflow-lite-21.a)
 
 
 set(SOURCE_FILES main.cxx)
