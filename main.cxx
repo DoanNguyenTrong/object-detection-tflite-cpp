@@ -146,7 +146,7 @@ main(int argc, char const * argv[]) {
   bool delegate_option = false;
   if (argc == 2){
     delegate_option = std::atoi(argv[1]);
-    std::cout <<  (delegate_option)?"Hexagon" : "GPU" << " Delegate!\n";
+    std::cout <<  ((delegate_option != 0)? "Hexagon" : "GPU") << " Delegate!\n";
   }
   if (argc == 4) {
     modelfile = argv[1];
@@ -261,7 +261,7 @@ main(int argc, char const * argv[]) {
     std::cout << "Enabling GPU Delegate!\n";
     // GPU delegate
     gpu_options.experimental_flags = TFLITE_GPU_EXPERIMENTAL_FLAGS_NONE;
-    delegate = TfLiteGpuDelegateV2Create(gpu_options);
+    delegate = TfLiteGpuDelegateV2Create(&gpu_options);
     
   }
 
