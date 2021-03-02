@@ -290,7 +290,7 @@ main(int argc, char const * argv[]) {
   // @doan 20210226: gstreamer "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080"
   const char *pipeline = "qtiqmmfsrc ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
   // cv::VideoCapture cap(0);
-  cv::VideoCapture cap(pipeline, CAP_GSTREAMER);
+  cv::VideoCapture cap(pipeline, cv::CAP_GSTREAMER);
   if (!cap.isOpened()) {
     std::cerr << "Failed to open VideoCapture." << std::endl;
     return -1;
