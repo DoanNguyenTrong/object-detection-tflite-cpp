@@ -23,9 +23,10 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 
 ADD_LIBRARY(TFlite_LIB STATIC IMPORTED)
-SET_TARGET_PROPERTIES(TFlite_LIB PROPERTIES
-IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libtensorflow-lite-21.a)
-
+SET_TARGET_PROPERTIES(TFlite_LIB PROPERTIES 
+IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflow-lite-latest.a)
+SET_TARGET_PROPERTIES(TFlite_GPU_LIB PROPERTIES 
+IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflowlite_gpu_delegate.so)
 
 set(SOURCE_FILES main.cxx)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
@@ -35,4 +36,5 @@ target_link_libraries(${PROJECT_NAME}
     pthread
     dl
 )
-target_link_libraries(${PROJECT_NAME} TFlite_LIB ${CMAKE_DL_LIBS} stdc++fs rt)
+
+target_link_libraries(${PROJECT_NAME} TFlite_LIB TFlite_GPU_LIB ${CMAKE_DL_LIBS} stdc++fs rt)

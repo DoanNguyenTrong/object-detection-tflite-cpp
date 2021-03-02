@@ -17,6 +17,7 @@
 
 // doan 202010227: add hexagon delegate
 #include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
+#include <tensorflow/lite/delegates/gpu/delegate.h>
 
 
 #ifndef __has_include
@@ -141,13 +142,18 @@ main(int argc, char const * argv[]) {
   // @doan 20210226: change file paths
   std::string modelfile = "models/mobilenet_v1_1.0_224/mobilenet_quant_v1_224.tflite";
   std::string labelfile = "models/mobilenet_v1_1.0_224/labels.txt";
-
-  if (argc == 3) {
+  
+  bool delegate_option = false;
+  if (argc == 2){
+    delegate_option = std::atoi(argv[1]);
+    std::cout <<  (delegate_option)?"Hexagon" : "GPU" << " Delegate!\n";
+  }
+  if (argc == 4) {
     modelfile = argv[1];
     labelfile = argv[2];
-    
+    delegate_option = std::atoi(argv[3]);
   } else if (argc != 1) {
-    std::cerr << "Usage of " << argv[0] << " [modelfile] [labelfile]" << std::endl;
+    std::cerr << "Usage of " << argv[0] << " [modelfile] [labelfile] [delegate_option]" << std::endl;
     return -1;
   }
   
@@ -233,28 +239,38 @@ main(int argc, char const * argv[]) {
     in8 = interpreter->typed_tensor<uint8_t>(input);
   }
 
-  // doan 202010227: add hexagon delegate
+
   interpreter->SetNumThreads(4);
   // interpreter->UseNNAPI(1);
 
   // doan 20210227: Hexagon V66Q
   // https://developer.qualcomm.com/qualcomm-robotics-rb5-kit/software-reference-manual/
   TfLiteHexagonDelegateOptions * params = {0};
-  
+  TfLiteGpuDelegateOptionsV2 gpu_options = TfLiteGpuDelegateOptionsV2Default();
+
+  TfLiteDelegate * delegate = nullptr;
   // Initializes the DSP connection.
   const char* path = "hexagon/hexagon_nn_skel_v1.20.0.1/";
-  TfLiteHexagonInitWithPath(path);
-  
-  auto delegate = TfLiteHexagonDelegateCreate(params);
 
-  // 
-  auto delegateStatus = interpreter->ModifyGraphWithDelegate(delegate);
-  
-  if (delegateStatus == kTfLiteDelegateError){
-    std::cerr << "Failed to use Hexagon Delegate" << std::endl;
-    return -1;
+  if (delegate_option){
+    std::cout << "Enabling Hexagon Delegate!\n";
+    TfLiteHexagonInitWithPath(path);
+    delegate = TfLiteHexagonDelegateCreate(params);
+  }
+  else{
+    std::cout << "Enabling GPU Delegate!\n";
+    // GPU delegate
+    gpu_options.experimental_flags = TFLITE_GPU_EXPERIMENTAL_FLAGS_NONE;
+    delegate = TfLiteGpuDelegateV2Create(gpu_options);
+    
   }
 
+  if (interpreter->ModifyGraphWithDelegate(delegate) != kTfLiteOk){
+    std::cerr << "Failed to use Hexagon Delegate" << std::endl;
+    return -1;
+  }else{
+    std::cout << "Done!\n";
+  }
 
   std::cout << "Loading: mplus-1c-thin.ttf" << std::endl;
   std::ifstream fontfile("mplus-1c-thin.ttf", std::ios::in | std::ios::binary);
@@ -272,9 +288,9 @@ main(int argc, char const * argv[]) {
   std::cout << cv::getBuildInformation() << std::endl;
 
   // @doan 20210226: gstreamer "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080"
-  const char *pipeline = "v4l2src ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
-  cv::VideoCapture cap(0);
-  // cv::VideoCapture cap(pipeline, CAP_GSTREAMER);
+  const char *pipeline = "qtiqmmfsrc ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
+  // cv::VideoCapture cap(0);
+  cv::VideoCapture cap(pipeline, CAP_GSTREAMER);
   if (!cap.isOpened()) {
     std::cerr << "Failed to open VideoCapture." << std::endl;
     return -1;
@@ -351,9 +367,10 @@ main(int argc, char const * argv[]) {
     cv::imshow("window", frame);
   }
   cv::destroyAllWindows();
-  // Do any needed cleanup and delete 'delegate'.
-  TfLiteHexagonDelegateDelete( delegate);
-  TfLiteHexagonTearDown();
+
+// // Do any needed cleanup and delete 'delegate'.
+// TfLiteHexagonDelegateDelete( delegate);
+// TfLiteHexagonTearDown();
   return 0;
 }
 
