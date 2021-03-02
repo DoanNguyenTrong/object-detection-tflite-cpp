@@ -39,4 +39,4 @@ target_link_libraries(${PROJECT_NAME}
     dl
 )
 target_link_libraries(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflowlite_gpu_delegate.so)
-target_link_libraries(${PROJECT_NAME} TFlite_LIB TFlite_GPU_LIB ${CMAKE_DL_LIBS} stdc++fs rt)
+target_link_libraries(${PROJECT_NAME} TFlite_LIB ${CMAKE_DL_LIBS} stdc++fs rt)
