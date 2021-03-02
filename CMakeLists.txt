@@ -26,7 +26,14 @@ ADD_LIBRARY(TFlite_LIB STATIC IMPORTED)
 SET_TARGET_PROPERTIES(TFlite_LIB PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflow-lite-latest.a)
 
 ADD_LIBRARY(TFlite_GPU_LIB SHARED IMPORTED GLOBAL)
-SET_TARGET_PROPERTIES(TFlite_GPU_LIB PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflowlite_gpu_delegate.so)
+SET_TARGET_PROPERTIES(TFlite_GPU_LIB PROPERTIES 
+IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflowlite_gpu_delegate.so)
+
+
+ADD_LIBRARY(TFlite_Hexagon_LIB SHARED IMPORTED GLOBAL)
+SET_TARGET_PROPERTIES(TFlite_Hexagon_LIB PROPERTIES 
+IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libhexagon_delegate.so)
+
 
 set(SOURCE_FILES main.cxx)
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
@@ -36,4 +43,6 @@ target_link_libraries(${PROJECT_NAME}
     pthread
     dl
 )
-target_link_libraries(${PROJECT_NAME} TFlite_LIB TFlite_GPU_LIB ${CMAKE_DL_LIBS} stdc++fs rt)
+target_link_libraries(${PROJECT_NAME} TFlite_GPU_LIB)
+target_link_libraries(${PROJECT_NAME} TFlite_Hexagon_LIB)
+target_link_libraries(${PROJECT_NAME} TFlite_LIB ${CMAKE_DL_LIBS} stdc++fs rt)

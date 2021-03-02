@@ -15,9 +15,9 @@
 #include <freetype/ftoutln.h>
 
 
-// doan 202010227: add hexagon delegate
-#include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
-#include <tensorflow/lite/delegates/gpu/delegate.h>
+// // doan 202010227: add hexagon delegate
+// #include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
+// #include <tensorflow/lite/delegates/gpu/delegate.h>
 
 
 #ifndef __has_include
@@ -368,7 +368,7 @@ main(int argc, char const * argv[]) {
   }
   cv::destroyAllWindows();
 
-// Do any needed cleanup and delete 'delegate'.
+  // Do any needed cleanup and delete 'delegate'.
   if (delegate_option){
     TfLiteHexagonDelegateDelete( delegate);
     TfLiteHexagonTearDown();
@@ -376,7 +376,7 @@ main(int argc, char const * argv[]) {
   else{
     TfLiteGpuDelegateV2Delete( delegate);
   }
-  
+
   return 0;
 }
 
