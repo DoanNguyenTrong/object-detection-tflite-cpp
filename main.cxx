@@ -368,9 +368,15 @@ main(int argc, char const * argv[]) {
   }
   cv::destroyAllWindows();
 
-// // Do any needed cleanup and delete 'delegate'.
-// TfLiteHexagonDelegateDelete( delegate);
-// TfLiteHexagonTearDown();
+// Do any needed cleanup and delete 'delegate'.
+  if (delegate_option){
+    TfLiteHexagonDelegateDelete( delegate);
+    TfLiteHexagonTearDown();
+  }
+  else{
+    TfLiteGpuDelegateV2Delete( delegate);
+  }
+  
   return 0;
 }
 
