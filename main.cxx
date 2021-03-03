@@ -254,8 +254,8 @@ main(int argc, char const * argv[]) {
 
   if (delegate_option){
     std::cout << "Enabling Hexagon Delegate!\n";
-    TfLiteHexagonInitWithPath(path);
-    delegate = TfLiteHexagonDelegateCreate(params);
+    // TfLiteHexagonInitWithPath(path);
+    // delegate = TfLiteHexagonDelegateCreate(params);
   }
   else{
     std::cout << "Enabling GPU Delegate!\n";
@@ -266,7 +266,7 @@ main(int argc, char const * argv[]) {
   }
 
   if (interpreter->ModifyGraphWithDelegate(delegate) != kTfLiteOk){
-    std::cerr << "Failed to use Hexagon Delegate" << std::endl;
+    std::cerr << "Failed to use GPU/Hexagon Delegate" << std::endl;
     return -1;
   }else{
     std::cout << "Done!\n";
@@ -370,14 +370,12 @@ main(int argc, char const * argv[]) {
 
   // Do any needed cleanup and delete 'delegate'.
   if (delegate_option){
-    TfLiteHexagonDelegateDelete( delegate);
-    TfLiteHexagonTearDown();
+    // TfLiteHexagonDelegateDelete( delegate);
+    // TfLiteHexagonTearDown();
   }
   else{
     TfLiteGpuDelegateV2Delete( delegate);
   }
-
   return 0;
 }
 
-// vim:set cino=>2 et:

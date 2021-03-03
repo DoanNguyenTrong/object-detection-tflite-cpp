@@ -21,34 +21,38 @@ message(STATUS " libraries: ${OpenCV_LIBS}")
 message(STATUS " include path: ${OpenCV_INCLUDE_DIRS}")
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-
+# tflite
 ADD_LIBRARY(TFlite_LIB STATIC IMPORTED)
 SET_TARGET_PROPERTIES(TFlite_LIB PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflow-lite-latest.a)
 
-
+# EGL
 ADD_LIBRARY(EGL_LIB SHARED IMPORTED GLOBAL)
 SET_TARGET_PROPERTIES(EGL_LIB PROPERTIES IMPORTED_LOCATION /usr/lib/aarch64-linux-gnu/libEGL.so)
-
+# GL
 ADD_LIBRARY(GL_LIB SHARED IMPORTED GLOBAL)
 SET_TARGET_PROPERTIES(GL_LIB PROPERTIES IMPORTED_LOCATION /usr/lib/aarch64-linux-gnu/libGL.so)
 
+# tflite GPU
 ADD_LIBRARY(TFlite_GPU_LIB SHARED IMPORTED GLOBAL)
 SET_TARGET_PROPERTIES(TFlite_GPU_LIB PROPERTIES 
 IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflowlite_gpu_delegate.so)
-
+# tflite Hexagon
 ADD_LIBRARY(TFlite_Hexagon_LIB SHARED IMPORTED GLOBAL)
 SET_TARGET_PROPERTIES(TFlite_Hexagon_LIB PROPERTIES 
 IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libhexagon_delegate.so)
 
 
-set(SOURCE_FILES main.cxx)
+set(SOURCE_FILES main.cxx )
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} )
+
 target_link_libraries(${PROJECT_NAME}
     freetype
     pthread
     dl
 )
+
 target_link_libraries(${PROJECT_NAME} TFlite_GPU_LIB)
 target_link_libraries(${PROJECT_NAME} TFlite_Hexagon_LIB)
 target_link_libraries(${PROJECT_NAME} EGL_LIB GL_LIB)
