@@ -26,20 +26,41 @@ ADD_LIBRARY(TFlite_LIB STATIC IMPORTED)
 SET_TARGET_PROPERTIES(TFlite_LIB PROPERTIES IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libtensorflow-lite-latest.a)
 
 # EGL
-ADD_LIBRARY(EGL_LIB SHARED IMPORTED GLOBAL)
+ADD_LIBRARY(EGL_LIB SHARED IMPORTED )
 SET_TARGET_PROPERTIES(EGL_LIB PROPERTIES IMPORTED_LOCATION /usr/lib/aarch64-linux-gnu/libEGL.so)
 # GL
-ADD_LIBRARY(GL_LIB SHARED IMPORTED GLOBAL)
+ADD_LIBRARY(GL_LIB SHARED IMPORTED )
 SET_TARGET_PROPERTIES(GL_LIB PROPERTIES IMPORTED_LOCATION /usr/lib/aarch64-linux-gnu/libGL.so)
 
 # tflite GPU
-ADD_LIBRARY(TFlite_GPU_LIB SHARED IMPORTED GLOBAL)
+ADD_LIBRARY(TFlite_GPU_LIB SHARED IMPORTED )
 SET_TARGET_PROPERTIES(TFlite_GPU_LIB PROPERTIES 
 IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libtensorflowlite_gpu_delegate.so)
 # tflite Hexagon
-ADD_LIBRARY(TFlite_Hexagon_LIB SHARED IMPORTED GLOBAL)
+ADD_LIBRARY(TFlite_Hexagon_LIB SHARED IMPORTED )
 SET_TARGET_PROPERTIES(TFlite_Hexagon_LIB PROPERTIES 
 IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libhexagon_delegate.so)
+
+ADD_LIBRARY(TFlite_Hex_Ker_LIB SHARED IMPORTED )
+SET_TARGET_PROPERTIES(TFlite_Hex_Ker_LIB PROPERTIES 
+IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libhexagon_delegate_kernel.so)
+
+ADD_LIBRARY(Hexagon_Imp_LIB SHARED IMPORTED )
+SET_TARGET_PROPERTIES(Hexagon_Imp_LIB PROPERTIES 
+IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libhexagon_implementation.so)
+
+ADD_LIBRARY(Op_Builder_LIB SHARED IMPORTED )
+SET_TARGET_PROPERTIES(Op_Builder_LIB PROPERTIES 
+IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libop_builder.so)
+
+ADD_LIBRARY(Simple_Delegate_LIB SHARED IMPORTED )
+SET_TARGET_PROPERTIES(Simple_Delegate_LIB PROPERTIES 
+IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libsimple_delegate.so)
+
+ADD_LIBRARY(Utils_LIB SHARED IMPORTED )
+SET_TARGET_PROPERTIES(Utils_LIB PROPERTIES 
+IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libutils.so)
+
 
 set(SOURCE_FILES main.cxx )
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
@@ -52,14 +73,6 @@ target_link_libraries(${PROJECT_NAME}
     dl
 )
 
-target_link_libraries(${PROJECT_NAME}
-    /root/doan/test_ws/object-detection-rb5/tflite/libhexagon_delegate_kernel.so
-    /root/doan/test_ws/object-detection-rb5/tflite/libhexagon_implementation.so
-    /root/doan/test_ws/object-detection-rb5/tflite/libop_builder.so
-    /root/doan/test_ws/object-detection-rb5/tflite/libsimple_delegate.so
-    /root/doan/test_ws/object-detection-rb5/tflite/libutils.so
-)
-
-target_link_libraries(${PROJECT_NAME} TFlite_GPU_LIB TFlite_Hexagon_LIB)
+target_link_libraries(${PROJECT_NAME} TFlite_GPU_LIB TFlite_Hexagon_LIB TFlite_Hex_Ker_LIB Hexagon_Imp_LIB Op_Builder_LIB Simple_Delegate_LIB Utils_LIB)
 target_link_libraries(${PROJECT_NAME} EGL_LIB GL_LIB)
 target_link_libraries(${PROJECT_NAME} TFlite_LIB ${CMAKE_DL_LIBS} stdc++fs rt)
