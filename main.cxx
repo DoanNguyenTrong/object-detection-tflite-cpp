@@ -245,7 +245,7 @@ main(int argc, char const * argv[]) {
 
   // doan 20210227: Hexagon V66Q
   // https://developer.qualcomm.com/qualcomm-robotics-rb5-kit/software-reference-manual/
-  TfLiteHexagonDelegateOptions * params = {0};
+  // TfLiteHexagonDelegateOptions * params = {0};
   TfLiteGpuDelegateOptionsV2 gpu_options = TfLiteGpuDelegateOptionsV2Default();
 
   TfLiteDelegate * delegate = nullptr;
