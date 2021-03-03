@@ -16,7 +16,7 @@
 
 
 // // doan 202010227: add hexagon delegate
-// #include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
+#include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
 #include <tensorflow/lite/delegates/gpu/delegate.h>
 
 
@@ -246,21 +246,21 @@ main(int argc, char const * argv[]) {
 
   // doan 20210227: Hexagon V66Q
   // https://developer.qualcomm.com/qualcomm-robotics-rb5-kit/software-reference-manual/
-  // TfLiteHexagonDelegateOptions * params = {0};
-  TfLiteGpuDelegateOptionsV2 gpu_options = TfLiteGpuDelegateOptionsV2Default();
-
+  
   TfLiteDelegate * delegate = nullptr;
   // Initializes the DSP connection.
-  const char* path = "hexagon/hexagon_nn_skel_v1.20.0.1/";
 
   if (delegate_option){
+    const char* path = "hexagon/hexagon_nn_skel_v1.20.0.1/";
     std::cout << "Enabling Hexagon Delegate!\n";
-    // TfLiteHexagonInitWithPath(path);
-    // delegate = TfLiteHexagonDelegateCreate(params);
+    TfLiteHexagonInitWithPath(path);
+    TfLiteHexagonDelegateOptions * params = {0};
+    delegate = TfLiteHexagonDelegateCreate(params);
   }
   else{
     std::cout << "Enabling GPU Delegate!\n";
     // GPU delegate
+    TfLiteGpuDelegateOptionsV2 gpu_options = TfLiteGpuDelegateOptionsV2Default();
     gpu_options.experimental_flags = TFLITE_GPU_EXPERIMENTAL_FLAGS_NONE;
     delegate = TfLiteGpuDelegateV2Create(&gpu_options);
     
@@ -279,6 +279,9 @@ main(int argc, char const * argv[]) {
     std::cerr << "Failed to read font file" << std::endl;
     return -1;
   }
+  else{
+    std::cout << "Done!\n";
+  }
   std::vector<uint8_t> fontdata(
       (std::istreambuf_iterator<char>(fontfile)),
       std::istreambuf_iterator<char>());
@@ -296,7 +299,7 @@ main(int argc, char const * argv[]) {
     std::cerr << "Failed to open VideoCapture." << std::endl;
     return -1;
   }else{
-    std::cout << "Done!!\n";
+    std::cout << "Opened videocapture stream!!!\n";
   }
 
   while (true) {
@@ -371,8 +374,8 @@ main(int argc, char const * argv[]) {
 
   // Do any needed cleanup and delete 'delegate'.
   if (delegate_option){
-    // TfLiteHexagonDelegateDelete( delegate);
-    // TfLiteHexagonTearDown();
+    TfLiteHexagonDelegateDelete( delegate);
+    TfLiteHexagonTearDown();
   }
   else{
     TfLiteGpuDelegateV2Delete( delegate);
