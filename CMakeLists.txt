@@ -41,6 +41,9 @@ ADD_LIBRARY(TFlite_Hexagon_LIB SHARED IMPORTED GLOBAL)
 SET_TARGET_PROPERTIES(TFlite_Hexagon_LIB PROPERTIES 
 IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libhexagon_delegate.so)
 
+ADD_LIBRARY(TFlite_Hex_Ker_LIB SHARED IMPORTED GLOBAL)
+SET_TARGET_PROPERTIES(TFlite_Hex_Ker_LIB PROPERTIES 
+IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libhexagon_delegate_kernel.so)
 
 set(SOURCE_FILES main.cxx )
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
@@ -53,7 +56,6 @@ target_link_libraries(${PROJECT_NAME}
     dl
 )
 
-target_link_libraries(${PROJECT_NAME} TFlite_GPU_LIB)
-target_link_libraries(${PROJECT_NAME} TFlite_Hexagon_LIB)
+target_link_libraries(${PROJECT_NAME} TFlite_GPU_LIB TFlite_Hexagon_LIB TFlite_Hex_Ker_LIB)
 target_link_libraries(${PROJECT_NAME} EGL_LIB GL_LIB)
 target_link_libraries(${PROJECT_NAME} TFlite_LIB ${CMAKE_DL_LIBS} stdc++fs rt)
