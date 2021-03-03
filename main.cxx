@@ -148,11 +148,12 @@ main(int argc, char const * argv[]) {
     delegate_option = std::atoi(argv[1]);
     std::cout <<  ((delegate_option != 0)? "Hexagon" : "GPU") << " Delegate!\n";
   }
-  if (argc == 4) {
+  else if (argc == 4) {
     modelfile = argv[1];
     labelfile = argv[2];
     delegate_option = std::atoi(argv[3]);
-  } else if (argc != 1) {
+  } 
+  else if (argc != 1) {
     std::cerr << "Usage of " << argv[0] << " [modelfile] [labelfile] [delegate_option]" << std::endl;
     return -1;
   }
