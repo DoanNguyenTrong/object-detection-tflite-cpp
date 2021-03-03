@@ -52,7 +52,7 @@ target_link_libraries(${PROJECT_NAME}
     dl
 )
 
-target_link_libraries(${PROJECT_NAME} SHARED IMPORTED GLOBAL
+target_link_libraries(${PROJECT_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libhexagon_delegate_kernel.so
     ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libhexagon_implementation.so
     ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libop_builder.so
