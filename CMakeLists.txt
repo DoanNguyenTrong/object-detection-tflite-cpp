@@ -23,7 +23,7 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 
 # tflite
 ADD_LIBRARY(TFlite_LIB STATIC IMPORTED)
-SET_TARGET_PROPERTIES(TFlite_LIB PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflow-lite-latest.a)
+SET_TARGET_PROPERTIES(TFlite_LIB PROPERTIES IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/object-detection-tflite/tflite/libtensorflow-lite-latest.a)
 
 # EGL
 ADD_LIBRARY(EGL_LIB SHARED IMPORTED GLOBAL)
@@ -35,11 +35,11 @@ SET_TARGET_PROPERTIES(GL_LIB PROPERTIES IMPORTED_LOCATION /usr/lib/aarch64-linux
 # tflite GPU
 ADD_LIBRARY(TFlite_GPU_LIB SHARED IMPORTED GLOBAL)
 SET_TARGET_PROPERTIES(TFlite_GPU_LIB PROPERTIES 
-IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflowlite_gpu_delegate.so)
+IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/object-detection-tflite/tflite/libtensorflowlite_gpu_delegate.so)
 # tflite Hexagon
 ADD_LIBRARY(TFlite_Hexagon_LIB SHARED IMPORTED GLOBAL)
 SET_TARGET_PROPERTIES(TFlite_Hexagon_LIB PROPERTIES 
-IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libhexagon_delegate.so)
+IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/object-detection-tflite/tflite/libhexagon_delegate.so)
 
 set(SOURCE_FILES main.cxx )
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
@@ -53,11 +53,11 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME}
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libhexagon_delegate_kernel.so
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libhexagon_implementation.so
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libop_builder.so
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libsimple_delegate.so
-    ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libutils.so
+    /root/doan/test_ws/object-detection-rb5/object-detection-tflite/tflite/libhexagon_delegate_kernel.so
+    /root/doan/test_ws/object-detection-rb5/object-detection-tflite/tflite/libhexagon_implementation.so
+    /root/doan/test_ws/object-detection-rb5/object-detection-tflite/tflite/libop_builder.so
+    /root/doan/test_ws/object-detection-rb5/object-detection-tflite/tflite/libsimple_delegate.so
+    /root/doan/test_ws/object-detection-rb5/object-detection-tflite/tflite/libutils.so
 )
 
 target_link_libraries(${PROJECT_NAME} TFlite_GPU_LIB TFlite_Hexagon_LIB)
