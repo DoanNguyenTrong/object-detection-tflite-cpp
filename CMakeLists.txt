@@ -29,6 +29,8 @@ ADD_LIBRARY(TFlite_GPU_LIB SHARED IMPORTED GLOBAL)
 SET_TARGET_PROPERTIES(TFlite_GPU_LIB PROPERTIES 
 IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/tflite/libtensorflowlite_gpu_delegate.so)
 
+ADD_LIBRARY(EGL_LIB SHARED IMPORTED GLOBAL)
+SET_TARGET_PROPERTIES(EGL_LIB PROPERTIES IMPORTED_LOCATION /usr/lib/aarch64-linux-gnu/libEGL.so)
 
 ADD_LIBRARY(TFlite_Hexagon_LIB SHARED IMPORTED GLOBAL)
 SET_TARGET_PROPERTIES(TFlite_Hexagon_LIB PROPERTIES 
@@ -45,4 +47,5 @@ target_link_libraries(${PROJECT_NAME}
 )
 target_link_libraries(${PROJECT_NAME} TFlite_GPU_LIB)
 target_link_libraries(${PROJECT_NAME} TFlite_Hexagon_LIB)
+target_link_libraries(${PROJECT_NAME} EGL_LIB)
 target_link_libraries(${PROJECT_NAME} TFlite_LIB ${CMAKE_DL_LIBS} stdc++fs rt)
