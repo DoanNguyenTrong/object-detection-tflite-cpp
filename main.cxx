@@ -253,9 +253,9 @@ main(int argc, char const * argv[]) {
   if (delegate_option){
     const char* path = "hexagon/hexagon_nn_skel_v1.20.0.1/";
     std::cout << "Enabling Hexagon Delegate!\n";
-    TfLiteHexagonInitWithPath(path);
-    TfLiteHexagonDelegateOptions * params = {0};
-    delegate = TfLiteHexagonDelegateCreate(params);
+    // TfLiteHexagonInitWithPath(path);
+    // TfLiteHexagonDelegateOptions * params = {0};
+    // delegate = TfLiteHexagonDelegateCreate(params);
   }
   else{
     std::cout << "Enabling GPU Delegate!\n";
@@ -375,8 +375,8 @@ main(int argc, char const * argv[]) {
 
   // Do any needed cleanup and delete 'delegate'.
   if (delegate_option){
-    TfLiteHexagonDelegateDelete( delegate);
-    TfLiteHexagonTearDown();
+    // TfLiteHexagonDelegateDelete( delegate);
+    // TfLiteHexagonTearDown();
   }
   else{
     TfLiteGpuDelegateV2Delete( delegate);
