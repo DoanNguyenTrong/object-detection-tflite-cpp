@@ -311,7 +311,7 @@ main(int argc, char const * argv[]) {
     // if (key == 27)
     //   break;
     std::cout <<  "Capturing: " << counter++ <<std::endl;
-    std:: cout << "Frame: "<< frame.height << " - " << frame.width << std::endl;
+    std:: cout << "Frame: "<< frame.cols << " - " << frame.rows << std::endl;
 
     cv::Mat resized(wanted_height, wanted_width, frame.type());
     cv::resize(frame, resized, resized.size(), cv::INTER_CUBIC);
