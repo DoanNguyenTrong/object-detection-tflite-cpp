@@ -307,9 +307,9 @@ main(int argc, char const * argv[]) {
   while (true) {
     cv::Mat frame;
     cap >> frame;
-    int key = cv::waitKey(1);
-    if (key == 27)
-      break;
+    // int key = cv::waitKey(1);
+    // if (key == 27)
+    //   break;
     std::cout <<  "Capturing: " << counter++ <<std::endl;
 
 
@@ -362,7 +362,7 @@ main(int argc, char const * argv[]) {
         return x.first > y.first;
       }
     );
-    
+
     // // Put text to frame
     // n = 0;
     // for (const auto& result : results) {
