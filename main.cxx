@@ -291,7 +291,9 @@ main(int argc, char const * argv[]) {
   
   // std::cout << cv::getBuildInformation() << std::endl;
 
-  // @doan 20210226: gstreamer "video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080"
+
+  // camx-hal3-test
+  // v4l2-ctl --list-devices
   const char *pipeline = "qtiqmmfsrc device-name=/dev/video32 ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
   // cv::VideoCapture cap(32);
   cv::VideoCapture cap(pipeline, cv::CAP_GSTREAMER);
@@ -325,7 +327,8 @@ main(int argc, char const * argv[]) {
     // Inference
     status = interpreter->Invoke();
     if (status != kTfLiteOk) {
-      cv::imshow("window", frame);
+      // cv::imshow("window", frame);
+      std::cout << "Failed to run inference!!\n";
       continue;
     }
 
@@ -359,19 +362,19 @@ main(int argc, char const * argv[]) {
         return x.first > y.first;
       }
     );
+    
+    // // Put text to frame
+    // n = 0;
+    // for (const auto& result : results) {
+    //   std::stringstream ss;
+    //   ss << result.first << ": " << labels[result.second];
+    //   ftw.putText(frame, ss.str(),  cv::Point(50, 50 + 50 * n), 16,
+    //       cv::Scalar(255,255,255), false);
+    //   if (++n >= 3)
+    //     break;
+    // }
 
-    // Put text to frame
-    n = 0;
-    for (const auto& result : results) {
-      std::stringstream ss;
-      ss << result.first << ": " << labels[result.second];
-      ftw.putText(frame, ss.str(),  cv::Point(50, 50 + 50 * n), 16,
-          cv::Scalar(255,255,255), false);
-      if (++n >= 3)
-        break;
-    }
-
-    cv::imshow("window", frame);
+    // cv::imshow("window", frame);
   }
   cv::destroyAllWindows();
 
