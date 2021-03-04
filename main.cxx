@@ -311,7 +311,7 @@ main(int argc, char const * argv[]) {
     // if (key == 27)
     //   break;
     std::cout <<  "Capturing: " << counter++ <<std::endl;
-    std:: cout << "Frame: "<< frame << std::endl;
+    std:: cout << "Frame: "<< frame.height << " - " << frame.width << std::endl;
 
     cv::Mat resized(wanted_height, wanted_width, frame.type());
     cv::resize(frame, resized, resized.size(), cv::INTER_CUBIC);
@@ -362,6 +362,10 @@ main(int argc, char const * argv[]) {
         return x.first > y.first;
       }
     );
+
+    for (int i = 0; i < results.size(); i++){
+      std::cout << results[i].first << ", " << results[i].second << std::endl;
+    }
 
     // // Put text to frame
     // n = 0;
