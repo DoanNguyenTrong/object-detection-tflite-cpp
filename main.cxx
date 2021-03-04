@@ -294,7 +294,8 @@ main(int argc, char const * argv[]) {
 
   // camx-hal3-test > A:id=0,psize=3840x2160,pformat=yuv420,ssize=3840x2160,sformat=jpeg,zsl=1
   // v4l2-ctl --list-devices
-  const char *pipeline = "qtiqmmfsrc device-name=/dev/video32 ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
+  // const char *pipeline = "qtiqmmfsrc device-name=/dev/video32 ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
+  const char *pipeline = "qtiqmmfsrc ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
   // cv::VideoCapture cap(32);
   cv::VideoCapture cap(pipeline, cv::CAP_GSTREAMER);
   if (!cap.isOpened()) {
@@ -310,7 +311,7 @@ main(int argc, char const * argv[]) {
     // int key = cv::waitKey(1);
     // if (key == 27)
     //   break;
-    
+
     // std::cout <<  "Capturing: " << counter++ <<std::endl;
     // std:: cout << "Frame: "<< frame.cols << " - " << frame.rows << std::endl;
 
