@@ -363,7 +363,7 @@ main(int argc, char const * argv[]) {
       }
     );
 
-
+    std::cout << "Results size: " << results.size() << std::endl;
     for (int i = 0; i < results.size(); i++){
       std::cout << results[i].first << ", " << results[i].second << std::endl;
     }
