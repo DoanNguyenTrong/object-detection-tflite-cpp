@@ -7,7 +7,7 @@ message(STATUS "optional:-std=c++17")
 
 
 
-set(OpenCV_DIR "/root/doan/test_ws/opencv-master/build")
+set(OpenCV_DIR "/root/doan/test_ws/opencv-wayland/build")
 
 include_directories(/usr/include/freetype2/)
 include_directories(/root/doan/test_ws/tensorflow/)
