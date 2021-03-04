@@ -295,7 +295,7 @@ main(int argc, char const * argv[]) {
   // camx-hal3-test
   // v4l2-ctl --list-devices
   const char *pipeline = "qtiqmmfsrc device-name=/dev/video32 ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
-  cv::VideoCapture cap(0);
+  cv::VideoCapture cap(32);
   // cv::VideoCapture cap(pipeline, cv::CAP_GSTREAMER);
   if (!cap.isOpened()) {
     std::cerr << "Failed to open VideoCapture." << std::endl;
