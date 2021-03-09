@@ -421,10 +421,10 @@ main(int argc, char const * argv[]) {
     auto          classes_  = classes->data.f;
     auto          scores_   = scores->data.f;
 
-    std::cout << "bboxes: " << bboxes_ << std::endl;
-    std::cout << "classes: " << classes_ << std::endl;
-    std::cout << "scores: " << scores_ << std::endl;
-    std::cout << "num_detec: " << nums_ << std::endl;
+    std::cout << "bboxes: " << &bboxes_ << std::endl;
+    std::cout << "classes: " << &classes_ << std::endl;
+    std::cout << "scores: " << &scores_ << std::endl;
+    std::cout << "num_detec: " << &nums_ << std::endl;
 
     // std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
     
