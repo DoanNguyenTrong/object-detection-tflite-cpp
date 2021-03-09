@@ -411,34 +411,31 @@ main(int argc, char const * argv[]) {
       continue;
     }
 
-
+    // Bounding box coordinates of detected objects
     TfLiteTensor* bboxes    = interpreter->tensor(interpreter->outputs()[0]);
+    // Class index of detected objects
     TfLiteTensor* classes   = interpreter->tensor(interpreter->outputs()[1]);
+    // Confidence of detected objects
     TfLiteTensor* scores    = interpreter->tensor(interpreter->outputs()[2]);
+    // Total number of detected objects (inaccurate and not needed)
     TfLiteTensor* num_detec = interpreter->tensor(interpreter->outputs()[3]);
-    auto          nums_     = num_detec->data.f;
+    
     auto          bboxes_   = bboxes->data.f;
     auto          classes_  = classes->data.f;
     auto          scores_   = scores->data.f;
-
+    
+    auto bboxes_size = bboxes->dims->data[bboxes->dims->size - 1]; 
+    auto classes_size= classes->dims->data[classes->dims->size - 1];
     auto scores_size = scores->dims->data[scores->dims->size - 1];
-
-
-    std::cout << "bboxes: " << bboxes->dims->data[bboxes->dims->size - 1] << std::endl;
-    std::cout << "classes: " << classes->dims->data[classes->dims->size - 1] << std::endl;
-    std::cout << "scores: " << scores->dims->data[scores->dims->size - 1] << std::endl;
-    std::cout << "num_detec: " << num_detec->dims->data[num_detec->dims->size -1] << std::endl;
-
+    
+    std::cout << "bboxes: " << bboxes_size << "," << bboxes->dims->size << std::endl;
+    std::cout << "classes: " << classes_size << "," << classes->dims->size << std::endl;
+    std::cout << "scores: " << scores_size << "," << scores->dims->size << std::endl;
+    
     // std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
     
-    // Extract output
-    int output = interpreter->outputs()[0];
-    TfLiteIntArray* output_dims = interpreter->tensor(output)->dims;
-    auto output_size = output_dims->data[output_dims->size - 1];
-    int output_type = interpreter->tensor(output)->type;
+    int output_type = bboxes->type;
 
-
-    std::cout << "output size: " << output_size << std::endl;
 
     std::vector<float> locations;
     std::vector<float> cls;
@@ -449,7 +446,7 @@ main(int argc, char const * argv[]) {
       cls.push_back(classes_[i]);
       std::cout << output << ", " << classes_[i] << std::endl;
     }
-    
+
     int count=0;
     std::vector<Object> objects;
 
