@@ -50,7 +50,7 @@ float expit(float x) {
 }
 
 //nms
-float iou(Rect& rectA, Rect& rectB){
+float iou(cv::Rect& rectA, cv::Rect& rectB){
     int x1 = std::max(rectA.x, rectB.x);
     int y1 = std::max(rectA.y, rectB.y);
     int x2 = std::min(rectA.x + rectA.width, rectB.x + rectB.width);
@@ -64,7 +64,7 @@ float iou(Rect& rectA, Rect& rectB){
     return (o >= 0) ? o : 0;
 }
 
-void nms(vector<Object>& boxes,  const double nms_threshold)
+void nms(std::vector<Object>& boxes,  const double nms_threshold)
 {
 		std::vector<int> scores;
     for(int i = 0; i < boxes.size();i++){
@@ -425,7 +425,7 @@ main(int argc, char const * argv[]) {
     std::cout << "classes: " << classes_ << std::endl;
     std::cout << "scores: " << scores_ << std::endl;
     std::cout << "num_detec: " << nums_ << std::endl;
-    
+
     // std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
     
     // Extract output
