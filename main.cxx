@@ -436,35 +436,52 @@ main(int argc, char const * argv[]) {
 
     std::cout << "output size: " << output_dims->size -1 << std::endl;
 
-    std::vector<std::pair<float, int>> results;
 
-    if (wanted_type == kTfLiteFloat32) {
-      float *scores = interpreter->typed_output_tensor<float>(0);
-      for (int i = 0; i < output_size; ++i) {
-        float value = (scores[i] - 127) / 127.0;
-        if (value < 0.1)
-          continue;
-        results.push_back(std::pair<float, int>(value, i));
-      }
-    } else if (wanted_type == kTfLiteUInt8) {
-      uint8_t *scores = interpreter->typed_output_tensor<uint8_t>(0);
-      for (int i = 0; i < output_size; ++i) {
-        float value = (float)scores[i] / 255.0;
-        if (value < 0.2)
-          continue;
-        results.push_back(std::pair<float, int>(value, i));
+    if (wanted_type == kTfLiteFloat32){
+      for (int i = 0; i < output_size; i++){
+        float value = (scores_[i] - 127) / 127.0;
+        std::cout << value << std::endl;
       }
     }
-    std::sort(results.begin(), results.end(),
-      [](std::pair<float, int>& x, std::pair<float, int>& y) -> int {
-        return x.first > y.first;
+    else if (wanted_type == kTfLiteUInt8){
+      for (int i = 0; i < output_size; i++){
+        float value = (float)scores[i] / 255.0; 
+        std::cout << value << std::endl;
       }
-    );
-
-    std::cout << "Results size: " << results.size() << std::endl;
-    for (int i = 0; i < results.size(); i++){
-      std::cout << results[i].first << ", " << labels[results[i].second] << std::endl;
     }
+    else{
+      std::cout << "wanted_type is not kTfLiteFloat32 or kTfLiteUInt8\n";
+    }
+    // std::vector<std::pair<float, int>> results;
+
+    // if (wanted_type == kTfLiteFloat32) {
+    //   float *scores = interpreter->typed_output_tensor<float>(0);
+    //   for (int i = 0; i < output_size; ++i) {
+    //     float value = (scores[i] - 127) / 127.0;
+    //     if (value < 0.1)
+    //       continue;
+    //     results.push_back(std::pair<float, int>(value, i));
+    //   }
+    // } else if (wanted_type == kTfLiteUInt8) {
+    //   uint8_t *scores = interpreter->typed_output_tensor<uint8_t>(0);
+    //   for (int i = 0; i < output_size; ++i) {
+    //     float value = (float)scores[i] / 255.0;
+    //     if (value < 0.2)
+    //       continue;
+    //     results.push_back(std::pair<float, int>(value, i));
+    //   }
+    // }
+
+    // std::sort(results.begin(), results.end(),
+    //   [](std::pair<float, int>& x, std::pair<float, int>& y) -> int {
+    //     return x.first > y.first;
+    //   }
+    // );
+
+    // std::cout << "Results size: " << results.size() << std::endl;
+    // for (int i = 0; i < results.size(); i++){
+    //   std::cout << results[i].first << ", " << labels[results[i].second] << std::endl;
+    // }
 
     // // Put text to frame
     // n = 0;
