@@ -310,23 +310,11 @@ main(int argc, char const * argv[]) {
     cv::Mat frame;
 
     cap >> frame;
-    counter++;
-    // check if we succeeded
-    if (counter == nFrames) {
-        counter = 0;
-        cap.set(cv::CAP_PROP_POS_FRAMES, 0);
-    }
-    if (frame.empty()) {
-        std::cerr << "ERROR! blank frame grabbed\n";
-        break;
-    }
     // int key = cv::waitKey(1);
     // if (key == 27)
     //   break;
 
-    // std::cout <<  "Capturing: " << counter++ <<std::endl;
-    // std:: cout << "Frame: "<< frame.cols << " - " << frame.rows << std::endl;
-
+    // Resize to fit the NN
     cv::Mat resized(wanted_height, wanted_width, frame.type());
     cv::resize(frame, resized, resized.size(), cv::INTER_CUBIC);
 
@@ -346,6 +334,7 @@ main(int argc, char const * argv[]) {
       continue;
     }
 
+    std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
     // Extract output
     int output = interpreter->outputs()[0];
     TfLiteIntArray* output_dims = interpreter->tensor(output)->dims;
