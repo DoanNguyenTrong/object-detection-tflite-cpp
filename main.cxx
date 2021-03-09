@@ -461,7 +461,7 @@ main(int argc, char const * argv[]) {
       // auto rec = Rect(xmin, ymin, width, height);
     
       float score = scores_[count]; // How has this to be done?
-      std::cout << "score: "<< score << "(" << xmin << "," << ymin << "," << width << "," << height << ")"<< std::endl;
+      std::cout << cls[count] << " score: "<< score << " (" << xmin << "," << ymin << "," << width << "," << height << ")"<< std::endl;
       // if (score < 0.5f) continue;
     
       // auto id=outputClasses;
