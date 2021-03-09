@@ -212,7 +212,7 @@ main(int argc, char const * argv[]) {
   
   // @doan 20210226: change file paths
   std::string modelfile = "models/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29/detect.tflite";
-  std::string labelfile = "models/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29/labelmap.txt";
+  std::string labelfile = "models/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29/labels.txt";
   
   bool delegate_option = false;
   if (argc == 2){
