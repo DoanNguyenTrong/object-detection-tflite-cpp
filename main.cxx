@@ -4,6 +4,8 @@
 #include <iostream>
 #include <iostream>
 #include <fstream>
+#include <cmath>
+
 #include <opencv2/opencv.hpp>
 
 #include <tensorflow/lite/model.h>
@@ -19,7 +21,7 @@
 #include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
 #include <tensorflow/lite/delegates/gpu/delegate.h>
 
-
+// inlcude filessystem to check the existance of file
 #ifndef __has_include
   static_assert(false, "__has_include not supported");
 #else
@@ -34,6 +36,75 @@
      namespace fs = boost::filesystem;
 #  endif
 #endif
+
+
+struct Object{
+  cv::Rect rec;
+  int      class_id;
+  float    score;
+};
+
+
+float expit(float x) {
+  return 1.f / (1.f + expf(-x));
+}
+
+//nms
+float iou(Rect& rectA, Rect& rectB){
+    int x1 = std::max(rectA.x, rectB.x);
+    int y1 = std::max(rectA.y, rectB.y);
+    int x2 = std::min(rectA.x + rectA.width, rectB.x + rectB.width);
+    int y2 = std::min(rectA.y + rectA.height, rectB.y + rectB.height);
+    int w = std::max(0, (x2 - x1 + 1));
+    int h = std::max(0, (y2 - y1 + 1));
+    float inter = w * h;
+    float areaA = rectA.width * rectA.height;
+    float areaB = rectB.width * rectB.height;
+    float o = inter / (areaA + areaB - inter);
+    return (o >= 0) ? o : 0;
+}
+
+void nms(vector<Object>& boxes,  const double nms_threshold)
+{
+		std::vector<int> scores;
+    for(int i = 0; i < boxes.size();i++){
+			scores.push_back(boxes[i].score);
+		}
+
+		std::vector<int> index;
+    for(int i = 0; i < scores.size(); ++i){
+        index.push_back(i);
+    }
+		std::sort(index.begin(), index.end(), [&](int a, int b){
+        return scores[a] > scores[b]; }); 
+    std::vector<bool> del(scores.size(), false);
+		for(size_t i = 0; i < index.size(); i++){
+        if( !del[index[i]]){
+            for(size_t j = i+1; j < index.size(); j++){
+                if(iou(boxes[index[i]].rec, boxes[index[j]].rec) > nms_threshold){
+                    del[index[j]] = true;
+                }
+            }
+        }
+    }
+		std::vector<Object> new_obj;
+    for(const auto i : index){
+				Object obj;
+				if(!del[i])
+				{
+					obj.class_id = boxes[i].class_id;
+					obj.rec.x =  boxes[i].rec.x;
+					obj.rec.y =  boxes[i].rec.y;
+					obj.rec.width =  boxes[i].rec.width;
+					obj.rec.height =  boxes[i].rec.height;
+					obj.score =  boxes[i].score;
+				}
+				new_obj.push_back(obj);
+
+        
+    }
+    boxes = new_obj;  
+}
 
 // To put text to image
 class ft_renderer {
@@ -275,19 +346,20 @@ main(int argc, char const * argv[]) {
     std::cout << "Done!\n";
   }
 
-  std::cout << "Loading: mplus-1c-thin.ttf" << std::endl;
-  std::ifstream fontfile("mplus-1c-thin.ttf", std::ios::in | std::ios::binary);
-  if (!fontfile) {
-    std::cerr << "Failed to read font file" << std::endl;
-    return -1;
-  }
-  else{
-    std::cout << "Done!\n";
-  }
-  std::vector<uint8_t> fontdata(
-      (std::istreambuf_iterator<char>(fontfile)),
-      std::istreambuf_iterator<char>());
-  ft_renderer ftw(fontdata);
+  // Renderer to put text on frame
+  // std::cout << "Loading: mplus-1c-thin.ttf" << std::endl;
+  // std::ifstream fontfile("mplus-1c-thin.ttf", std::ios::in | std::ios::binary);
+  // if (!fontfile) {
+  //   std::cerr << "Failed to read font file" << std::endl;
+  //   return -1;
+  // }
+  // else{
+  //   std::cout << "Done!\n";
+  // }
+  // std::vector<uint8_t> fontdata(
+  //     (std::istreambuf_iterator<char>(fontfile)),
+  //     std::istreambuf_iterator<char>());
+  // ft_renderer ftw(fontdata);
   
   
   
@@ -344,11 +416,16 @@ main(int argc, char const * argv[]) {
     TfLiteTensor* classes   = interpreter->tensor(interpreter->outputs()[1]);
     TfLiteTensor* scores    = interpreter->tensor(interpreter->outputs()[2]);
     TfLiteTensor* num_detec = interpreter->tensor(interpreter->outputs()[3]);
+    auto          nums_     = num_detec->data.f;
+    auto          bboxes_   = bboxes->data.f;
+    auto          classes_  = classes->data.f;
+    auto          scores_   = scores->data.f;
+
+    std::cout << "bboxes: " << bboxes_ << std::endl;
+    std::cout << "classes: " << classes_ << std::endl;
+    std::cout << "scores: " << scores_ << std::endl;
+    std::cout << "num_detec: " << nums_ << std::endl;
     
-    std::cout << "bboxes: " << bboxes << std::endl;
-    std::cout << "classes: " << classes << std::endl;
-    std::cout << "scores: " << scores << std::endl;
-    std::cout << "num_detec: " << num_detec << std::endl;
     // std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
     
     // Extract output
