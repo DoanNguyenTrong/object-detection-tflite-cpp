@@ -421,6 +421,9 @@ main(int argc, char const * argv[]) {
     auto          classes_  = classes->data.f;
     auto          scores_   = scores->data.f;
 
+    auto scores_size = scores->dims->data[scores->dims->size - 1];
+
+
     std::cout << "bboxes: " << bboxes->dims->data[bboxes->dims->size - 1] << std::endl;
     std::cout << "classes: " << classes->dims->data[classes->dims->size - 1] << std::endl;
     std::cout << "scores: " << scores->dims->data[scores->dims->size - 1] << std::endl;
@@ -439,14 +442,14 @@ main(int argc, char const * argv[]) {
 
     if (wanted_type == kTfLiteFloat32){
       std::cout << "Float32\n";
-      for (int i = 0; i < output_size; i++){
+      for (int i = 0; i < scores_size; i++){
         float value = (scores_[i] - 127) / 127.0;
         std::cout << value << std::endl;
       }
     }
     else if (wanted_type == kTfLiteUInt8){
-      std::cout << "UInt8\n" << output_size << std::endl;
-      for (int i = 0; i < output_size; i++){
+      std::cout << "UInt8\n" << scores_size << std::endl;
+      for (int i = 0; i < scores_size; i++){
         float value = (float)scores_[i] / 255.0; 
         std::cout << value << std::endl;
       }
