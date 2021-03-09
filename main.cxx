@@ -445,7 +445,7 @@ main(int argc, char const * argv[]) {
       }
     }
     else if (wanted_type == kTfLiteUInt8){
-      std::cout << "UInt8\n";
+      std::cout << "UInt8\n" << output_size << std::endl;
       for (int i = 0; i < output_size; i++){
         float value = (float)scores_[i] / 255.0; 
         std::cout << value << std::endl;
