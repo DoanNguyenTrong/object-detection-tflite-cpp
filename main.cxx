@@ -437,8 +437,48 @@ main(int argc, char const * argv[]) {
     auto output_size = output_dims->data[output_dims->size - 1];
     int output_type = interpreter->tensor(output)->type;
 
+
     std::cout << "output size: " << output_size << std::endl;
 
+    std::vector<float> locations;
+    std::vector<float> cls;
+
+    for (int i = 0; i < 20; i++){
+      auto output = bboxes_[i];
+      locations.push_back(output);
+      cls.push_back(classes_[i]);
+      std::cout << output << ", " << classes_[i] << std::endl;
+    }
+    
+    int count=0;
+    std::vector<Object> objects;
+
+    for(int j = 0; j <locations.size(); j+=4){
+      auto ymin=locations[j]*img_height;
+      auto xmin=locations[j+1]*img_width;
+      auto ymax=locations[j+2]*img_height;
+      auto xmax=locations[j+3]*img_width;
+      auto width= xmax - xmin;
+      auto height= ymax - ymin;
+      
+      // auto rec = Rect(xmin, ymin, width, height);
+    
+      float score = expit(nums_[count]); // How has this to be done?
+      std::cout << "score: "<< score << std::endl;
+      // if (score < 0.5f) continue;
+    
+      // auto id=outputClasses;
+      Object object;
+      object.class_id = cls[count];
+      object.rec.x = xmin;
+      object.rec.y = ymin;
+      object.rec.width = width;
+      object.rec.height = height;
+      object.score = score;
+      objects.push_back(object);
+
+      count+=1;
+    }
 
     if (wanted_type == kTfLiteFloat32){
       std::cout << "Float32\n";
