@@ -421,10 +421,10 @@ main(int argc, char const * argv[]) {
     auto          classes_  = classes->data.f;
     auto          scores_   = scores->data.f;
 
-    std::cout << "bboxes: " << bboxes_ << std::endl;
-    std::cout << "classes: " << classes_ << std::endl;
-    std::cout << "scores: " << scores_ << std::endl;
-    std::cout << "num_detec: " << nums_ << std::endl;
+    std::cout << "bboxes: " << bboxes->dims->data[bboxes->dims->size - 1] << std::endl;
+    std::cout << "classes: " << classes->dims->data[classes->dims->size - 1] << std::endl;
+    std::cout << "scores: " << scores->dims->data[scores->dims->size - 1] << std::endl;
+    std::cout << "num_detec: " << num_detec->dims->data[num_detec->dims->size -1] << std::endl;
 
     // std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
     
@@ -434,7 +434,7 @@ main(int argc, char const * argv[]) {
     auto output_size = output_dims->data[output_dims->size - 1];
     int output_type = interpreter->tensor(output)->type;
 
-    std::cout << "output size: " << output_dims->size -1 << std::endl;
+    std::cout << "output size: " << output_size << std::endl;
 
 
     if (wanted_type == kTfLiteFloat32){
