@@ -211,8 +211,8 @@ int
 main(int argc, char const * argv[]) {
   
   // @doan 20210226: change file paths
-  std::string modelfile = "models/mobilenet_v1_1.0_224/mobilenet_quant_v1_224.tflite";
-  std::string labelfile = "models/mobilenet_v1_1.0_224/labels.txt";
+  std::string modelfile = "models/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29/detect.tflite";
+  std::string labelfile = "models/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29/labels.txt";
   
   bool delegate_option = false;
   if (argc == 2){
@@ -421,10 +421,10 @@ main(int argc, char const * argv[]) {
     auto          classes_  = classes->data.f;
     auto          scores_   = scores->data.f;
 
-    std::cout << "bboxes: " << &bboxes_ << std::endl;
-    std::cout << "classes: " << &classes_ << std::endl;
-    std::cout << "scores: " << &scores_ << std::endl;
-    std::cout << "num_detec: " << &nums_ << std::endl;
+    std::cout << "bboxes: " << bboxes_ << std::endl;
+    std::cout << "classes: " << classes_ << std::endl;
+    std::cout << "scores: " << scores_ << std::endl;
+    std::cout << "num_detec: " << nums_ << std::endl;
 
     // std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
     
