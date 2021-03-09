@@ -241,6 +241,8 @@ main(int argc, char const * argv[]) {
   }
 
 
+
+
   interpreter->SetNumThreads(4);
   // interpreter->UseNNAPI(1);
 
@@ -314,6 +316,9 @@ main(int argc, char const * argv[]) {
     // if (key == 27)
     //   break;
 
+    auto img_height=frame.rows;
+    auto img_width =frame.cols;
+
     // Resize to fit the NN
     cv::Mat resized(wanted_height, wanted_width, frame.type());
     cv::resize(frame, resized, resized.size(), cv::INTER_CUBIC);
@@ -334,12 +339,25 @@ main(int argc, char const * argv[]) {
       continue;
     }
 
-    std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
+
+    TfLiteTensor* bboxes    = interpreter->tensor(interpreter->outputs()[0]);
+    TfLiteTensor* classes   = interpreter->tensor(interpreter->outputs()[1]);
+    TfLiteTensor* scores    = interpreter->tensor(interpreter->outputs()[2]);
+    TfLiteTensor* num_detec = interpreter->tensor(interpreter->outputs()[3]);
+    
+    std::cout << "bboxes: " << bboxes << std::endl;
+    std::cout << "classes: " << classes << std::endl;
+    std::cout << "scores: " << scores << std::endl;
+    std::cout << "num_detec: " << num_detec << std::endl;
+    // std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
+    
     // Extract output
     int output = interpreter->outputs()[0];
     TfLiteIntArray* output_dims = interpreter->tensor(output)->dims;
     auto output_size = output_dims->data[output_dims->size - 1];
     int output_type = interpreter->tensor(output)->type;
+
+    std::cout << "output size: " << output_dims->size -1 << std::endl;
 
     std::vector<std::pair<float, int>> results;
 
@@ -368,7 +386,7 @@ main(int argc, char const * argv[]) {
 
     std::cout << "Results size: " << results.size() << std::endl;
     for (int i = 0; i < results.size(); i++){
-      std::cout << results[i].first << ", " << results[i].second << std::endl;
+      std::cout << results[i].first << ", " << labels[results[i].second] << std::endl;
     }
 
     // // Put text to frame
