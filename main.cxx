@@ -438,12 +438,14 @@ main(int argc, char const * argv[]) {
 
 
     if (wanted_type == kTfLiteFloat32){
+      std::cout << "Float32\n";
       for (int i = 0; i < output_size; i++){
         float value = (scores_[i] - 127) / 127.0;
         std::cout << value << std::endl;
       }
     }
     else if (wanted_type == kTfLiteUInt8){
+      std::cout << "UInt8\n";
       for (int i = 0; i < output_size; i++){
         float value = (float)scores_[i] / 255.0; 
         std::cout << value << std::endl;
