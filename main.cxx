@@ -408,7 +408,7 @@ main(int argc, char const * argv[]) {
     if (status != kTfLiteOk) {
       // cv::imshow("window", frame);
       std::cout << "Failed to run inference!!\n";
-      continue;
+      return -1;
     }
 
     // Bounding box coordinates of detected objects
@@ -428,6 +428,11 @@ main(int argc, char const * argv[]) {
     auto classes_size= classes->dims->data[classes->dims->size - 1];
     auto scores_size = scores->dims->data[scores->dims->size - 1];
     
+    if (bboxes_size != 4){
+      std::cerr << "Incorrect bbox size: " << bboxes_size << std::endl;
+      exit(0);
+    }
+
     std::cout << "bboxes: " << bboxes_size << "," << bboxes->dims->size << std::endl;
     std::cout << "classes: " << classes_size << "," << classes->dims->size << std::endl;
     std::cout << "scores: " << scores_size << "," << scores->dims->size << std::endl;
@@ -461,6 +466,7 @@ main(int argc, char const * argv[]) {
       // auto rec = Rect(xmin, ymin, width, height);
     
       float score = scores_[count]; // How has this to be done?
+      std::cout << labels[cls[count]] << std::endl;
       std::cout << cls[count] << " score: "<< score << " (" << xmin << "," << ymin << "," << width << "," << height << ")"<< std::endl;
       // if (score < 0.5f) continue;
     
