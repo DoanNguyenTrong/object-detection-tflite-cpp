@@ -440,13 +440,13 @@ main(int argc, char const * argv[]) {
     std::vector<float> locations;
     std::vector<float> cls;
 
-    for (int i = 0; i < 20; i++){
-      auto output = bboxes_[i];
-      locations.push_back(output);
-      cls.push_back(classes_[i]);
-      std::cout << output << ", " << classes_[i] << std::endl;
+    for (int i = 0; i < bboxes_size * classes_size; i++){
+      locations.push_back(bboxes_[i]);
     }
 
+    for (int i = 0; i < classes_size; i++){
+      cls.push_back(classes_[i]);
+    }
     int count=0;
     std::vector<Object> objects;
 
@@ -460,8 +460,8 @@ main(int argc, char const * argv[]) {
       
       // auto rec = Rect(xmin, ymin, width, height);
     
-      float score = expit(nums_[count]); // How has this to be done?
-      std::cout << "score: "<< score << std::endl;
+      float score = scores_[count]; // How has this to be done?
+      std::cout << "score: "<< score << "(" << xmin << "," << ymin << "," << width << "," << height << ")"<< std::endl;
       // if (score < 0.5f) continue;
     
       // auto id=outputClasses;
