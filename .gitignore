@@ -1,2 +1,4 @@
 build/
 webcam-detector
+samples/
+*.avi
