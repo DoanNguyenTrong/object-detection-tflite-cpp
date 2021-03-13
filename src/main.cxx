@@ -74,8 +74,9 @@ int main(int argc, char const * argv[]) {
   cv::VideoWriter writer("outcpp.avi", cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(frame_width,frame_height));
 
   while (true) {
-    auto start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
+    auto start_millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    auto start_secs   = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    
     cv::Mat frame;
 
     cap >> frame;
@@ -87,18 +88,20 @@ int main(int argc, char const * argv[]) {
 
     std::vector<Object> objects = detector.extractObjects(0.3f, 0.5f);
 
-    auto end = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-
+    auto end_millis = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    auto end_secs   = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    
     // Time elapsed
-    auto millis = end - start;
-    std::cout << "Time taken : " << millis << " seconds" << std::endl;
-
+    auto millis = end_millis - start_millis;
+    auto secs   = end_secs   - start_secs;
+    std::cout << "Time taken : " << millis << " milliseconds" << std::endl;
+    std::cout << "Time taken : " << secs << " milliseconds" << std::endl;
     // Calculate frames per second
-    double fps2  = 1000. / millis;
-    std::cout << "Estimated frames per second : " << fps2 << std::endl;
+    double fps2  = 1000. / (1000. * secs + millis);
+    // std::cout << "Estimated frames per second : " << fps2 << std::endl;
 
     // std::cout << "Start drawing to object...\n";
-    std::cout << "size: "<< objects.size() << std::endl;
+    // std::cout << "size: "<< objects.size() << std::endl;
 
 
     double fps = cap.get(cv::CAP_PROP_FPS);
@@ -114,7 +117,7 @@ int main(int argc, char const * argv[]) {
       
       std::ostringstream fps_str;
       fps_str.width(5);
-      fps_str.precision(3);
+      fps_str.precision(4);
       fps_str << fps2;
       cv::putText(frame_cp, fps_str.str(), cv::Point(30, 30),
       cv::FONT_HERSHEY_COMPLEX, .8, cv::Scalar(10, 255, 30));
@@ -124,7 +127,7 @@ int main(int argc, char const * argv[]) {
       cv::putText(frame_cp, detector.labels_[cls], cv::Point(object.rec.x, object.rec.y - 5),
       cv::FONT_HERSHEY_COMPLEX, .8, cv::Scalar(10, 255, 30));
       
-      std::cout << detector.labels_[cls] << std::endl;
+      // std::cout << detector.labels_[cls] << std::endl;
 
     }
     
