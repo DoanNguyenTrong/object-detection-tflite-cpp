@@ -397,7 +397,7 @@ std::vector<Object> *ObjectDetector::extractObjects(const float score_thres, con
     std::cout << "Start NMS" << std::endl;
     nms(objects, nms_thres);
     std::cout << "Done!\n";
-    return &objects;
+    return objects;
 }
 
 

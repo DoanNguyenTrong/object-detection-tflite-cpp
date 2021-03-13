@@ -85,14 +85,14 @@ int main(int argc, char const * argv[]) {
       exit(0);
     }
 
-    std::vector<Object> *objects = detector.extractObjects(0.3f, 0.5f);
+    std::vector<Object> objects = detector.extractObjects(0.3f, 0.5f);
 
     std::cout << "Start drawing to object...\n";
-    std::cout << "size: "<< objects->size() << std::endl;
+    std::cout << "size: "<< objects.size() << std::endl;
 
     cv::Mat frame_cp = frame.clone();
-    for (int l = 0; l < objects->size(); l++){
-      Object object = objects->at(l);
+    for (int l = 0; l < objects.size(); l++){
+      Object object = objects.at(l);
       
       auto cls = object.class_id;
       auto score =object.score;
