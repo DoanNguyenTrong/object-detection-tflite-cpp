@@ -343,9 +343,9 @@ std::vector<Object> *ObjectDetector::extractObjects(const float score_thres, con
         return nullptr;
     }
 
-    std::cout << "bboxes: " << bboxes_size << "," << bboxes->dims->size << std::endl;
-    std::cout << "classes: " << classes_size << "," << classes->dims->size << std::endl;
-    std::cout << "scores: " << scores_size << "," << scores->dims->size << std::endl;
+    // std::cout << "bboxes: " << bboxes_size << "," << bboxes->dims->size << std::endl;
+    // std::cout << "classes: " << classes_size << "," << classes->dims->size << std::endl;
+    // std::cout << "scores: " << scores_size << "," << scores->dims->size << std::endl;
     
     // std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
     
@@ -396,8 +396,9 @@ std::vector<Object> *ObjectDetector::extractObjects(const float score_thres, con
 
         count++;
     }
-
+    std::cout << "Start NMS" << std::endl;
     nms(objects, nms_thres);
+    std::cout << "Done!\n";
     return &objects;
 }
 
