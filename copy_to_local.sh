@@ -1,0 +1,1 @@
+scp -P 8022 root@34.220.111.85:/root/doan/test_ws/object-detection-rb5/outcpp.avi /home/doannguyen/workspace/ros2_ws/code/test_ws/object-detection-tflite/samples/
