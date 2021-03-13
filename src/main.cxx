@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>     /* srand, rand */
-#include <time.h>       /* compute fps*/ 
+#include <chrono>       /* to compute fps*/ 
 
 #include "object_detection.h"
 #include "freetype_renderer.h"
@@ -74,10 +74,7 @@ int main(int argc, char const * argv[]) {
   cv::VideoWriter writer("outcpp.avi", cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(frame_width,frame_height));
 
   while (true) {
-    time_t start, end;
-    
-    // Start time
-    time(&start);
+    auto start = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     cv::Mat frame;
 
@@ -90,15 +87,14 @@ int main(int argc, char const * argv[]) {
 
     std::vector<Object> objects = detector.extractObjects(0.3f, 0.5f);
 
-    // End Time
-    time(&end);
+    auto end = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
     // Time elapsed
-    double seconds = difftime (end, start);
-    std::cout << "Time taken : " << seconds << " seconds" << std::endl;
+    auto millis = end - start;
+    std::cout << "Time taken : " << millis << " seconds" << std::endl;
 
     // Calculate frames per second
-    double fps2  = 1 / seconds;
+    double fps2  = 1000. / millis;
     std::cout << "Estimated frames per second : " << fps2 << std::endl;
 
     // std::cout << "Start drawing to object...\n";
