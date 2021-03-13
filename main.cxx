@@ -90,7 +90,7 @@ int main(int argc, char const * argv[]) {
 
 
     double fps = cap.get(cv::CAP_PROP_FPS);
-    cout << "Frames per second using video.get(CAP_PROP_FPS) : " << fps << endl;
+    std::cout << "Frames per second using video.get(CAP_PROP_FPS) : " << fps << std::endl;
 
     cv::Mat frame_cp = frame.clone();
     for (int l = 0; l < objects.size(); l++){
@@ -105,6 +105,8 @@ int main(int argc, char const * argv[]) {
       fps_str.precision(3);
       fps_str << fps;
       cv::putText(frame_cp, fps_str, cv::Point(5, 5));
+
+
       cv::rectangle(frame_cp, object.rec, color, 1);
       cv::putText(frame_cp, detector.labels_[cls], cv::Point(object.rec.x, object.rec.y - 5),
       cv::FONT_HERSHEY_COMPLEX, .8, cv::Scalar(10, 255, 30));
