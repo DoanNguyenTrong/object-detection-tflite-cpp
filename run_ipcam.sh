@@ -1,0 +1,1 @@
+./webcam-detector 0 rtsp://admin:ZFQALT@192.168.0.3:554/H.264

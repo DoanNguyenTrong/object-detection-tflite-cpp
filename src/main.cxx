@@ -52,7 +52,7 @@ int main(int argc, char const * argv[]) {
   // const char *pipeline = "qtiqmmfsrc device-name=/dev/video32 ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
   const char *pipeline = "qtiqmmfsrc ! video/x-h264,format=NV12,width=1920,height=1080,framerate=30/1 ! h264parse ! mp4mux ! queue ! appsink";
   cv::VideoCapture cap;
-  if (argc == 3){
+  if(argc == 3){
     cap.open(video_src);
   }
   else{
@@ -94,8 +94,9 @@ int main(int argc, char const * argv[]) {
     // Time elapsed
     auto millis = end_millis - start_millis;
     auto secs   = end_secs   - start_secs;
-    std::cout << "Time taken : " << millis << " milliseconds" << std::endl;
-    std::cout << "Time taken : " << secs << " milliseconds" << std::endl;
+
+    // std::cout << "Time taken : " << millis << " milliseconds" << std::endl;
+    // std::cout << "Time taken : " << secs << " milliseconds" << std::endl;
     // Calculate frames per second
     double fps2  = 1000. / (1000. * secs + millis);
     // std::cout << "Estimated frames per second : " << fps2 << std::endl;
