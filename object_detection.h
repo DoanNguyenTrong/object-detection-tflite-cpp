@@ -14,9 +14,7 @@
 #include <tensorflow/lite/interpreter.h>
 #include <tensorflow/lite/kernels/register.h>
 
-#include <ft2build.h>
-#include <freetype/freetype.h>
-#include <freetype/ftoutln.h>
+
 
 
 // // doan 202010227: add hexagon delegate
