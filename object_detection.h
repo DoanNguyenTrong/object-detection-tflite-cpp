@@ -144,7 +144,7 @@ public:
     uint8_t *input_8_  ;
     float   *input_16_ ;
     
-    const int delegate_opt_;
+    int delegate_opt_;
     TfLiteDelegate * delegate_;
 
 
@@ -157,7 +157,7 @@ public:
 
     int readModel();
 
-    int configure();
+    int configure(const std::uint8_t , const std::uint8_t );
 
     int inference(cv::Mat );
     
@@ -165,7 +165,7 @@ public:
 };
 
 
-ObjectDetector::ObjectDetector(const std::string model_file, const std::string label_file){
+ObjectDetector::ObjectDetector(std::string model_file, std::string label_file){
     model_file_ = model_file;
     label_file_ = label_file;
   
@@ -217,7 +217,7 @@ int ObjectDetector::readLabels(void){
 int ObjectDetector::readModel(void){
 
     std::cout << "Loading: " << model_file_ << std::endl;
-    model_ = tflite::FlatBufferModel::BuildFromFile(model_file_.c_str(), &error_reporter);
+    model_ = tflite::FlatBufferModel::BuildFromFile(model_file_.c_str(), &error_reporter_);
     if (!model_) {
         std::cerr << "Failed to load the model." << std::endl;
         return -1;
@@ -372,9 +372,6 @@ std::vector<Object> *ObjectDetector::extractObjects(const float score_thres, con
             continue;
         }
 
-        std::cout << labels[cls[count]] << std::endl;
-        std::cout << cls[count] << " score: "<< score << " (" << xmin << "," << ymin << "," << width << "," << height << ")"<< std::endl;
-
         auto ymin=locations[j]  *img_height_;
         auto xmin=locations[j+1]*img_width_;
         auto ymax=locations[j+2]*img_height_;
@@ -382,6 +379,9 @@ std::vector<Object> *ObjectDetector::extractObjects(const float score_thres, con
         auto width= xmax - xmin;
         auto height= ymax - ymin;
         
+        std::cout << labels_[cls[count]] << std::endl;
+        std::cout << cls[count] << " score: "<< score << " (" << xmin << "," << ymin << "," << width << "," << height << ")"<< std::endl;
+
         // auto rec = Rect(xmin, ymin, width, height)
         
         // auto id=outputClasses;

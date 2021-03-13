@@ -162,7 +162,7 @@ int main(int argc, char const * argv[]) {
   int frame_width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
   int frame_height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
   // Define the codec and create VideoWriter object.The output is stored in 'outcpp.avi' file.
-  cv::VideoWriter writer("outcpp.avi", cv::VideoWriter::fourcc('M','J','P','G'), 10, Size(frame_width,frame_height));
+  cv::VideoWriter writer("outcpp.avi", cv::VideoWriter::fourcc('M','J','P','G'), 10, cv::Size(frame_width,frame_height));
 
   while (true) {
     cv::Mat frame;
@@ -177,15 +177,16 @@ int main(int argc, char const * argv[]) {
     std::vector<Object> *objects = detector.extractObjects(0.3f, 0.5f);
 
 
-    std::cout << "size: "<<objects.size() << std::endl;
+    std::cout << "size: "<<objects->size() << std::endl;
 
-    for (int l = 0; l < objects.size(); l++){
-      Object object = objects.at(l);
+    for (int l = 0; l < objects->size(); l++){
+      Object object = objects->at(l);
       
       auto cls = object.class_id;
       auto score =object.score;
-      cv::Scalar color = CV::Scalar (rand() %255, rand() %255, rand() %255);
-      auto frame_cp = cv::rectangle(frame.copy(), object.rec, color, 1);
+      cv::Scalar color = cv::Scalar (rand() %255, rand() %255, rand() %255);
+      cv::Mat frame_cp = frame.clone();
+      cv::rectangle(frame_cp, object.rec, color, 1);
       cv::putText(frame_cp, detector.labels[cls+1], cv::Point(object.rec.x, object.rec.y - 5),
       cv::FONT_HERSHEY_COMPLEX, .8, cv::Scalar(10, 255, 30));
       std::cout << cls << std::endl;
