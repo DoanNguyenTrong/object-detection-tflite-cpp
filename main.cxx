@@ -14,9 +14,16 @@ int main(int argc, char const * argv[]) {
   std::string labelfile = "models/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29/labels.txt";
   
   bool delegate_option = false;
+  std::string video_src;
   if (argc == 2){
     delegate_option = std::atoi(argv[1]);
     std::cout <<  ((delegate_option != 0)? "Hexagon" : "GPU") << " Delegate!\n";
+  }
+  else if (argc == 3){
+    delegate_option = std::atoi(argv[1]);
+    std::cout <<  ((delegate_option != 0)? "Hexagon" : "GPU") << " Delegate!\n";
+    video_src = argv[2];
+    std::cout << "Video source: " << video_src << std::endl;
   }
   else if (argc == 4) {
     modelfile = argv[1];
@@ -59,7 +66,13 @@ int main(int argc, char const * argv[]) {
   // v4l2-ctl --list-devices
   // const char *pipeline = "qtiqmmfsrc device-name=/dev/video32 ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
   const char *pipeline = "qtiqmmfsrc ! video/x-h264,format=NV12,width=1920,height=1080,framerate=30/1 ! h264parse ! mp4mux ! queue ! appsink";
-  cv::VideoCapture cap("samples/demo.mp4");
+  cv::VideoCapture cap;
+  if (argc == 3){
+    cap.open(video_src);
+  }
+  else{
+    cap.open("/dev/video0");
+  }
   // cv::VideoCapture cap(pipeline, cv::CAP_GSTREAMER);
   // cv::VideoCapture cap("/dev/video0");
   if (!cap.isOpened()) {
