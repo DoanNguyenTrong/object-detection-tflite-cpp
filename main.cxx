@@ -104,7 +104,7 @@ int main(int argc, char const * argv[]) {
       fps_str.width(5);
       fps_str.precision(3);
       fps_str << fps;
-      cv::putText(frame_cp, fps_str, cv::Point(5, 5));
+      cv::putText(frame_cp, fps_str.str(), cv::Point(5, 5));
 
 
       cv::rectangle(frame_cp, object.rec, color, 1);
