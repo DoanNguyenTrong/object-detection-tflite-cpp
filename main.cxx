@@ -100,11 +100,11 @@ int main(int argc, char const * argv[]) {
       auto score =object.score;
       cv::Scalar color = cv::Scalar (rand() %255, rand() %255, rand() %255);
       
-      std::ostringstream fps_str;
-      fps_str.width(5);
-      fps_str.precision(3);
-      fps_str << fps;
-      cv::putText(frame_cp, fps_str.str(), cv::Point(5, 5));
+      // std::ostringstream fps_str;
+      // fps_str.width(5);
+      // fps_str.precision(3);
+      // fps_str << fps;
+      cv::putText(frame_cp, std::to_string(fps), cv::Point(5, 5));
 
 
       cv::rectangle(frame_cp, object.rec, color, 1);
