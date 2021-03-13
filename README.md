@@ -1,11 +1,11 @@
-# webcam-detect-tflite
+# object-detect-tflite
 
-Example App detecting objects from video capture using TensorFlow Lite.
 
 ## Usage
 
 ```
 $ ./webcam-detector
+$ ./webcam-detector 0 $camera_source // camera_source can be video, ip cam
 ```
 
 ## Requirements
@@ -18,15 +18,14 @@ $ ./webcam-detector
 After modifying Makefile
 
 ```
-$ make
+$ compile.sh
 ```
 
 ## License
 
 MIT
 
-labels.txt and mobilenet_quant_v1_224.tflite are provided from mobilenet_v1_1.0_224_quant.tgz
 
 ## Author
 
-Yasuhiro Matsumoto (a.k.a. mattn)
+Doan Nguyen

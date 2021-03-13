@@ -105,7 +105,7 @@ int main(int argc, char const * argv[]) {
     // std::cout << "size: "<< objects.size() << std::endl;
 
 
-    double fps = cap.get(cv::CAP_PROP_FPS);
+    // double fps = cap.get(cv::CAP_PROP_FPS);
     // std::cout << "Frames per second using video.get(CAP_PROP_FPS) : " << fps << std::endl;
 
     cv::Mat frame_cp = frame.clone();
