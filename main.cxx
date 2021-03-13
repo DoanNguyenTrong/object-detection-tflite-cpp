@@ -108,11 +108,11 @@ int main(int argc, char const * argv[]) {
     writer.write(frame_cp);
     // cv::imshow("window", frame);
     
-    
-    // Press  ESC on keyboard to  exit
-    int c = cv::waitKey(1);
-    if( c == 27 )
-      break;
+    // require GTK+ (install libgtk2.0-dev and pkg-config)
+    // // Press  ESC on keyboard to  exit
+    // int c = cv::waitKey(1);
+    // if( c == 27 )
+    //   break;
   }
 
   cap.release();
