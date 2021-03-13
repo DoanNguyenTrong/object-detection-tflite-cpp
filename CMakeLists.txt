@@ -64,7 +64,7 @@ SET_TARGET_PROPERTIES(Utils_LIB PROPERTIES
 IMPORTED_LOCATION /root/doan/test_ws/object-detection-rb5/tflite/libutils.so)
 
 
-set(SOURCE_FILES main.cxx )
+set(SOURCE_FILES src/main.cxx )
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS} )
