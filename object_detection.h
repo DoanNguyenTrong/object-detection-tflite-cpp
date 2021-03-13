@@ -159,7 +159,7 @@ public:
 
     int inference(cv::Mat );
     
-    std::vector<Object> * extractObjects(const float, const float );
+    std::vector<Object> extractObjects(const float, const float );
 };
 
 
@@ -314,7 +314,7 @@ int ObjectDetector::inference(cv::Mat frame){
 }
 
 
-std::vector<Object> *ObjectDetector::extractObjects(const float score_thres, const float nms_thres){
+std::vector<Object> ObjectDetector::extractObjects(const float score_thres, const float nms_thres){
     // Bounding box coordinates of detected objects
     TfLiteTensor* bboxes    = interpreter_->tensor(interpreter_->outputs()[0]);
     // Class index of detected objects
