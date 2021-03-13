@@ -179,15 +179,16 @@ int main(int argc, char const * argv[]) {
 
     std::cout << "size: "<<objects->size() << std::endl;
 
+    cv::Mat frame_cp = frame.clone();
     for (int l = 0; l < objects->size(); l++){
       Object object = objects->at(l);
       
       auto cls = object.class_id;
       auto score =object.score;
       cv::Scalar color = cv::Scalar (rand() %255, rand() %255, rand() %255);
-      cv::Mat frame_cp = frame.clone();
+      
       cv::rectangle(frame_cp, object.rec, color, 1);
-      cv::putText(frame_cp, detector.labels[cls+1], cv::Point(object.rec.x, object.rec.y - 5),
+      cv::putText(frame_cp, detector.labels_[cls+1], cv::Point(object.rec.x, object.rec.y - 5),
       cv::FONT_HERSHEY_COMPLEX, .8, cv::Scalar(10, 255, 30));
       std::cout << cls << std::endl;
 

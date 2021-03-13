@@ -120,8 +120,8 @@ void fill(T *in, cv::Mat& src) {
 
 class ObjectDetector{
 public:
-    const std::string                           model_file_;
-    const std::string                           label_file_;
+    std::string                           model_file_;
+    std::string                           label_file_;
     std::vector<std::string>                    labels_;
 
 
@@ -378,7 +378,7 @@ std::vector<Object> *ObjectDetector::extractObjects(const float score_thres, con
         auto xmax=locations[j+3]*img_width_;
         auto width= xmax - xmin;
         auto height= ymax - ymin;
-        
+
         std::cout << labels_[cls[count]] << std::endl;
         std::cout << cls[count] << " score: "<< score << " (" << xmin << "," << ymin << "," << width << "," << height << ")"<< std::endl;
 
