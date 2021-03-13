@@ -377,8 +377,8 @@ std::vector<Object> ObjectDetector::extractObjects(const float score_thres, cons
         auto width= xmax - xmin;
         auto height= ymax - ymin;
 
-        std::cout << labels_[cls[count]] << std::endl;
-        std::cout << cls[count] << " score: "<< score << " (" << xmin << "," << ymin << "," << width << "," << height << ")"<< std::endl;
+        // std::cout << labels_[cls[count]] << std::endl;
+        // std::cout << cls[count] << " score: "<< score << " (" << xmin << "," << ymin << "," << width << "," << height << ")"<< std::endl;
 
         // auto rec = Rect(xmin, ymin, width, height)
         
@@ -394,9 +394,9 @@ std::vector<Object> ObjectDetector::extractObjects(const float score_thres, cons
 
         count++;
     }
-    std::cout << "Start NMS" << std::endl;
+    // std::cout << "Start NMS" << std::endl;
     nms(objects, nms_thres);
-    std::cout << "Done!\n";
+    // std::cout << "Done!\n";
     return objects;
 }
 

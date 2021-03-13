@@ -96,4 +96,19 @@ public:
   }
 };
 
+// Renderer to put text on frame
+// std::cout << "Loading: mplus-1c-thin.ttf" << std::endl;
+// std::ifstream fontfile("mplus-1c-thin.ttf", std::ios::in | std::ios::binary);
+// if (!fontfile) {
+//   std::cerr << "Failed to read font file" << std::endl;
+//   return -1;
+// }
+// else{
+//   std::cout << "Done!\n";
+// }
+// std::vector<uint8_t> fontdata(
+//     (std::istreambuf_iterator<char>(fontfile)),
+//     std::istreambuf_iterator<char>());
+// ft_renderer ftw(fontdata);
+
 #endif // REETYPE_RENDERER_H

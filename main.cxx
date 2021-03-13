@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>     /* srand, rand */
+#include <time.h>       /* compute fps*/ 
 
 #include "object_detection.h"
 #include "freetype_renderer.h"
@@ -40,22 +41,6 @@ int main(int argc, char const * argv[]) {
   detector.readLabels();
   detector.readModel();
   detector.configure(4, delegate_option);
-
-
-  // Renderer to put text on frame
-  // std::cout << "Loading: mplus-1c-thin.ttf" << std::endl;
-  // std::ifstream fontfile("mplus-1c-thin.ttf", std::ios::in | std::ios::binary);
-  // if (!fontfile) {
-  //   std::cerr << "Failed to read font file" << std::endl;
-  //   return -1;
-  // }
-  // else{
-  //   std::cout << "Done!\n";
-  // }
-  // std::vector<uint8_t> fontdata(
-  //     (std::istreambuf_iterator<char>(fontfile)),
-  //     std::istreambuf_iterator<char>());
-  // ft_renderer ftw(fontdata);
   
   
   
@@ -100,8 +85,12 @@ int main(int argc, char const * argv[]) {
 
     std::vector<Object> objects = detector.extractObjects(0.3f, 0.5f);
 
-    std::cout << "Start drawing to object...\n";
+    // std::cout << "Start drawing to object...\n";
     std::cout << "size: "<< objects.size() << std::endl;
+
+
+    double fps = cap.get(cv::CAP_PROP_FPS);
+    cout << "Frames per second using video.get(CAP_PROP_FPS) : " << fps << endl;
 
     cv::Mat frame_cp = frame.clone();
     for (int l = 0; l < objects.size(); l++){
@@ -111,10 +100,15 @@ int main(int argc, char const * argv[]) {
       auto score =object.score;
       cv::Scalar color = cv::Scalar (rand() %255, rand() %255, rand() %255);
       
+      std::ostringstream fps_str;
+      fps_str.width(5);
+      fps_str.precision(3);
+      fps_str << fps;
+      cv::putText(frame_cp, fps_str, cv::Point(5, 5));
       cv::rectangle(frame_cp, object.rec, color, 1);
-      cv::putText(frame_cp, detector.labels_[cls+1], cv::Point(object.rec.x, object.rec.y - 5),
+      cv::putText(frame_cp, detector.labels_[cls], cv::Point(object.rec.x, object.rec.y - 5),
       cv::FONT_HERSHEY_COMPLEX, .8, cv::Scalar(10, 255, 30));
-      std::cout << cls << std::endl;
+      // std::cout << cls << std::endl;
 
     }
     
