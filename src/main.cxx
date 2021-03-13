@@ -95,11 +95,11 @@ int main(int argc, char const * argv[]) {
 
     // Time elapsed
     double seconds = difftime (end, start);
-    cout << "Time taken : " << seconds << " seconds" << endl;
+    std::cout << "Time taken : " << seconds << " seconds" << std::endl;
 
     // Calculate frames per second
     double fps2  = 1 / seconds;
-    cout << "Estimated frames per second : " << fps << endl;
+    std::cout << "Estimated frames per second : " << fps2 << std::endl;
 
     // std::cout << "Start drawing to object...\n";
     std::cout << "size: "<< objects.size() << std::endl;
