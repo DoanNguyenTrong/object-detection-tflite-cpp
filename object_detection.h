@@ -334,11 +334,11 @@ std::vector<Object> ObjectDetector::extractObjects(const float score_thres, cons
     
     if (bboxes_size != 4){
         std::cerr << "Incorrect bbox size: " << bboxes_size << std::endl;
-        return nullptr;
+        exit(0);
     }
     if (classes_size != scores_size){
         std::cerr << "Number of classes and scores does not match: " << classes_size << " " << scores_size << std::endl;
-        return nullptr;
+        exit(0);
     }
 
     // std::cout << "bboxes: " << bboxes_size << "," << bboxes->dims->size << std::endl;
