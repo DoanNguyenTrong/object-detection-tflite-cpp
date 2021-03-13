@@ -148,8 +148,9 @@ int main(int argc, char const * argv[]) {
   // v4l2-ctl --list-devices
   // const char *pipeline = "qtiqmmfsrc device-name=/dev/video32 ! video/x-raw,format=NV12,framerate=30/1,width=1920,height=1080 ! appsink";
   const char *pipeline = "qtiqmmfsrc ! video/x-h264,format=NV12,width=1920,height=1080,framerate=30/1 ! h264parse ! mp4mux ! queue ! appsink";
-  cv::VideoCapture cap("images/grace_hopper.bmp");
+  // cv::VideoCapture cap("images/grace_hopper.bmp");
   // cv::VideoCapture cap(pipeline, cv::CAP_GSTREAMER);
+  cv::VideoCapture cap(0);
   if (!cap.isOpened()) {
     std::cerr << "Failed to open VideoCapture." << std::endl;
     return -1;
@@ -172,6 +173,7 @@ int main(int argc, char const * argv[]) {
     if (state != 0){
       exit(0);
     }
+
     std::vector<Object> *objects = detector.extractObjects(0.3f, 0.5f);
 
 
