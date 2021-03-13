@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 project(webcam-detector)
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -O2 -g")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lX11 -ldl -lrt")
+set(CMAKE_BUILD_TYPE "Debug")
 
 message(STATUS "optional:-std=c++17")
 

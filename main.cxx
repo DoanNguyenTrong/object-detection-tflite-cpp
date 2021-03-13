@@ -150,7 +150,7 @@ int main(int argc, char const * argv[]) {
   const char *pipeline = "qtiqmmfsrc ! video/x-h264,format=NV12,width=1920,height=1080,framerate=30/1 ! h264parse ! mp4mux ! queue ! appsink";
   // cv::VideoCapture cap("images/grace_hopper.bmp");
   // cv::VideoCapture cap(pipeline, cv::CAP_GSTREAMER);
-  cv::VideoCapture cap(0);
+  cv::VideoCapture cap("/dev/video0");
   if (!cap.isOpened()) {
     std::cerr << "Failed to open VideoCapture." << std::endl;
     return -1;
