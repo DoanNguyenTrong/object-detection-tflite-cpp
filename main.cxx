@@ -1,110 +1,8 @@
-#include <cstdint>
-#include <vector>
-#include <chrono>
 #include <iostream>
-#include <iostream>
-#include <fstream>
-#include <cmath>
+#include <stdlib.h>     /* srand, rand */
 
-#include <opencv2/opencv.hpp>
+#include "object_detection.h"
 
-#include <tensorflow/lite/model.h>
-#include <tensorflow/lite/interpreter.h>
-#include <tensorflow/lite/kernels/register.h>
-
-#include <ft2build.h>
-#include <freetype/freetype.h>
-#include <freetype/ftoutln.h>
-
-
-// // doan 202010227: add hexagon delegate
-#include <tensorflow/lite/delegates/hexagon/hexagon_delegate.h>
-#include <tensorflow/lite/delegates/gpu/delegate.h>
-
-// inlcude filessystem to check the existance of file
-#ifndef __has_include
-  static_assert(false, "__has_include not supported");
-#else
-#  if __has_include(<filesystem>)
-#    include <filesystem>
-     namespace fs = std::filesystem;
-#  elif __has_include(<experimental/filesystem>)
-#    include <experimental/filesystem>
-     namespace fs = std::experimental::filesystem;
-#  elif __has_include(<boost/filesystem.hpp>)
-#    include <boost/filesystem.hpp>
-     namespace fs = boost::filesystem;
-#  endif
-#endif
-
-
-struct Object{
-  cv::Rect rec;
-  int      class_id;
-  float    score;
-};
-
-
-float expit(float x) {
-  return 1.f / (1.f + expf(-x));
-}
-
-//nms
-float iou(cv::Rect& rectA, cv::Rect& rectB){
-    int x1 = std::max(rectA.x, rectB.x);
-    int y1 = std::max(rectA.y, rectB.y);
-    int x2 = std::min(rectA.x + rectA.width, rectB.x + rectB.width);
-    int y2 = std::min(rectA.y + rectA.height, rectB.y + rectB.height);
-    int w = std::max(0, (x2 - x1 + 1));
-    int h = std::max(0, (y2 - y1 + 1));
-    float inter = w * h;
-    float areaA = rectA.width * rectA.height;
-    float areaB = rectB.width * rectB.height;
-    float o = inter / (areaA + areaB - inter);
-    return (o >= 0) ? o : 0;
-}
-
-void nms(std::vector<Object>& boxes,  const double nms_threshold)
-{
-		std::vector<int> scores;
-    for(int i = 0; i < boxes.size();i++){
-			scores.push_back(boxes[i].score);
-		}
-
-		std::vector<int> index;
-    for(int i = 0; i < scores.size(); ++i){
-        index.push_back(i);
-    }
-		std::sort(index.begin(), index.end(), [&](int a, int b){
-        return scores[a] > scores[b]; }); 
-    std::vector<bool> del(scores.size(), false);
-		for(size_t i = 0; i < index.size(); i++){
-        if( !del[index[i]]){
-            for(size_t j = i+1; j < index.size(); j++){
-                if(iou(boxes[index[i]].rec, boxes[index[j]].rec) > nms_threshold){
-                    del[index[j]] = true;
-                }
-            }
-        }
-    }
-		std::vector<Object> new_obj;
-    for(const auto i : index){
-				Object obj;
-				if(!del[i])
-				{
-					obj.class_id = boxes[i].class_id;
-					obj.rec.x =  boxes[i].rec.x;
-					obj.rec.y =  boxes[i].rec.y;
-					obj.rec.width =  boxes[i].rec.width;
-					obj.rec.height =  boxes[i].rec.height;
-					obj.score =  boxes[i].score;
-				}
-				new_obj.push_back(obj);
-
-        
-    }
-    boxes = new_obj;  
-}
 
 // To put text to image
 class ft_renderer {
@@ -196,19 +94,9 @@ public:
   }
 };
 
-template<typename T>
-void
-fill(T *in, cv::Mat& src) {
-  int n = 0, nc = src.channels(), ne = src.elemSize();
-  for (int y = 0; y < src.rows; ++y)
-    for (int x = 0; x < src.cols; ++x)
-      for (int c = 0; c < nc; ++c)
-        in[n++] = src.data[y * src.step + x * ne + c];
-}
 
 
-int
-main(int argc, char const * argv[]) {
+int main(int argc, char const * argv[]) {
   
   // @doan 20210226: change file paths
   std::string modelfile = "models/coco_ssd_mobilenet_v1_1.0_quant_2018_06_29/detect.tflite";
@@ -229,122 +117,12 @@ main(int argc, char const * argv[]) {
     return -1;
   }
   
-  // @doan 20210226: check for existance
-  if (fs::exists(modelfile)){
-    std::cout << "EXISTS: "<< modelfile << std::endl;
-  }
-  else{
-    std::cout << "INEXISTS: "<< modelfile << std::endl;
-    return -1;
-  }
-  if (fs::exists(labelfile)){
-    std::cout << "EXISTS: "<< labelfile << std::endl;
-  }
-  else{
-    std::cout << "INEXISTS: "<< labelfile << std::endl;
-    return -1;
-  }
-
-
-  TfLiteStatus                              status;
-  std::unique_ptr<tflite::FlatBufferModel>  model;
-  std::unique_ptr<tflite::Interpreter>      interpreter;
-  tflite::StderrReporter                    error_reporter;
   
-  std::cout << "Loading: " << modelfile << std::endl;
-  model = tflite::FlatBufferModel::BuildFromFile(modelfile.c_str(), &error_reporter);
-  if (!model) {
-    std::cerr << "Failed to load the model." << std::endl;
-    return -1;
-  }else{
-    std::cout << "Done!!\n";
-  }
+  ObjectDetector detector(modelfile, labelfile);
+  detector.readLabels();
+  detector.readModel();
+  detector.configure(4, delegate_option);
 
-  std::cout << "Loading: " << labelfile << std::endl;
-  std::ifstream file(labelfile);
-  if (!file) {
-    std::cerr << "Failed to read " << labelfile << "." << std::endl;
-    return -1;
-  }else{
-    std::cout << "Done!!\n";
-  }
-  std::vector<std::string>  labels;
-  std::string               line;
-  while (std::getline(file, line))
-    labels.push_back(line);
-  while (labels.size() % 16)
-    labels.emplace_back();
-  
-
-
-  tflite::ops::builtin::BuiltinOpResolver resolver;
-  tflite::InterpreterBuilder(*model, resolver)(&interpreter);
-  
-  status = interpreter->AllocateTensors();
-  if (status != kTfLiteOk) {
-    std::cerr << "Failed to allocate the memory for tensors." << std::endl;
-    return -1;
-  }else{
-    std::cout << "Done!!\n";
-  }
-
-
-  cv::Scalar white(255, 255, 255);
-  int input = interpreter->inputs()[0];
-
-  TfLiteIntArray* dims = interpreter->tensor(input)->dims;
-  int wanted_height = dims->data[1];
-  int wanted_width = dims->data[2];
-  int wanted_channels = dims->data[3];
-  int wanted_type = interpreter->tensor(input)->type;
-
-
-  // Input of the interpreter
-  uint8_t *in8 = nullptr;
-  float *in16 = nullptr;
-
-  if (wanted_type == kTfLiteFloat32) {
-    std::cout << "Model has not been quantized! Could not use Hexagon Delegate!\n";
-    in16 = interpreter->typed_tensor<float>(input);
-  } else if (wanted_type == kTfLiteUInt8) {
-    std::cout << "Quantized model! Can use Hexagon Delegate!\n";
-    in8 = interpreter->typed_tensor<uint8_t>(input);
-  }
-
-
-
-
-  interpreter->SetNumThreads(4);
-  // interpreter->UseNNAPI(1);
-
-  // doan 20210227: Hexagon V66Q
-  // https://developer.qualcomm.com/qualcomm-robotics-rb5-kit/software-reference-manual/
-  
-  TfLiteDelegate * delegate = nullptr;
-  // Initializes the DSP connection.
-
-  if (delegate_option){
-    const char* path = "hexagon/hexagon_nn_skel_v1.20.0.1/";
-    std::cout << "Enabling Hexagon Delegate!\n";
-    // TfLiteHexagonInitWithPath(path);
-    // TfLiteHexagonDelegateOptions * params = {0};
-    // delegate = TfLiteHexagonDelegateCreate(params);
-  }
-  else{
-    std::cout << "Enabling GPU Delegate!\n";
-    // GPU delegate
-    TfLiteGpuDelegateOptionsV2 gpu_options = TfLiteGpuDelegateOptionsV2Default();
-    gpu_options.experimental_flags = TFLITE_GPU_EXPERIMENTAL_FLAGS_NONE;
-    delegate = TfLiteGpuDelegateV2Create(&gpu_options);
-    
-  }
-
-  if (interpreter->ModifyGraphWithDelegate(delegate) != kTfLiteOk){
-    std::cerr << "Failed to use GPU/Hexagon Delegate" << std::endl;
-    return -1;
-  }else{
-    std::cout << "Done!\n";
-  }
 
   // Renderer to put text on frame
   // std::cout << "Loading: mplus-1c-thin.ttf" << std::endl;
@@ -378,182 +156,53 @@ main(int argc, char const * argv[]) {
   }else{
     std::cout << "Opened videocapture stream!!!\n";
   }
-  int nFrames = (int)cap.get(cv::CAP_PROP_FRAME_COUNT);
-  int counter = 0;
+
+  // width & height
+  int frame_width = cap.get(cv::CAP_PROP_FRAME_WIDTH);
+  int frame_height = cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+  // Define the codec and create VideoWriter object.The output is stored in 'outcpp.avi' file.
+  cv::VideoWriter writer("outcpp.avi", cv::VideoWriter::fourcc('M','J','P','G'), 10, Size(frame_width,frame_height));
+
   while (true) {
     cv::Mat frame;
 
     cap >> frame;
-    // int key = cv::waitKey(1);
-    // if (key == 27)
-    //   break;
 
-    auto img_height=frame.rows;
-    auto img_width =frame.cols;
-
-    // Resize to fit the NN
-    cv::Mat resized(wanted_height, wanted_width, frame.type());
-    cv::resize(frame, resized, resized.size(), cv::INTER_CUBIC);
-
-    int n = 0;
-    // Overwrite input of the NN
-    if (wanted_type == kTfLiteFloat32) {
-      fill(in16, resized);
-    } else if (wanted_type == kTfLiteUInt8) {
-      fill(in8, resized);
-    }
-
-    // Inference
-    status = interpreter->Invoke();
-    if (status != kTfLiteOk) {
-      // cv::imshow("window", frame);
-      std::cout << "Failed to run inference!!\n";
-      return -1;
-    }
-
-    // Bounding box coordinates of detected objects
-    TfLiteTensor* bboxes    = interpreter->tensor(interpreter->outputs()[0]);
-    // Class index of detected objects
-    TfLiteTensor* classes   = interpreter->tensor(interpreter->outputs()[1]);
-    // Confidence of detected objects
-    TfLiteTensor* scores    = interpreter->tensor(interpreter->outputs()[2]);
-    // Total number of detected objects (inaccurate and not needed)
-    TfLiteTensor* num_detec = interpreter->tensor(interpreter->outputs()[3]);
-    
-    auto          bboxes_   = bboxes->data.f;
-    auto          classes_  = classes->data.f;
-    auto          scores_   = scores->data.f;
-    
-    auto bboxes_size = bboxes->dims->data[bboxes->dims->size - 1]; 
-    auto classes_size= classes->dims->data[classes->dims->size - 1];
-    auto scores_size = scores->dims->data[scores->dims->size - 1];
-    
-    if (bboxes_size != 4){
-      std::cerr << "Incorrect bbox size: " << bboxes_size << std::endl;
+    int state = detector.inference(frame);
+    if (state != 0){
       exit(0);
     }
-
-    std::cout << "bboxes: " << bboxes_size << "," << bboxes->dims->size << std::endl;
-    std::cout << "classes: " << classes_size << "," << classes->dims->size << std::endl;
-    std::cout << "scores: " << scores_size << "," << scores->dims->size << std::endl;
-    
-    // std::cout << "Output size: " << interpreter->outputs().size() << std::endl;
-    
-    int output_type = bboxes->type;
+    std::vector<Object> *objects = detector.extractObjects(0.3f, 0.5f);
 
 
-    std::vector<float> locations;
-    std::vector<float> cls;
+    std::cout << "size: "<<objects.size() << std::endl;
 
-    for (int i = 0; i < bboxes_size * classes_size; i++){
-      locations.push_back(bboxes_[i]);
-    }
-
-    for (int i = 0; i < classes_size; i++){
-      cls.push_back(classes_[i]);
-    }
-    int count=0;
-    std::vector<Object> objects;
-
-    for(int j = 0; j <locations.size(); j+=4){
-      auto ymin=locations[j]*img_height;
-      auto xmin=locations[j+1]*img_width;
-      auto ymax=locations[j+2]*img_height;
-      auto xmax=locations[j+3]*img_width;
-      auto width= xmax - xmin;
-      auto height= ymax - ymin;
+    for (int l = 0; l < objects.size(); l++){
+      Object object = objects.at(l);
       
-      // auto rec = Rect(xmin, ymin, width, height);
+      auto cls = object.class_id;
+      auto score =object.score;
+      cv::Scalar color = CV::Scalar (rand() %255, rand() %255, rand() %255);
+      auto frame_cp = cv::rectangle(frame.copy(), object.rec, color, 1);
+      cv::putText(frame_cp, detector.labels[cls+1], cv::Point(object.rec.x, object.rec.y - 5),
+      cv::FONT_HERSHEY_COMPLEX, .8, cv::Scalar(10, 255, 30));
+      std::cout << cls << std::endl;
+
+    }
     
-      float score = scores_[count]; // How has this to be done?
-      std::cout << labels[cls[count]] << std::endl;
-      std::cout << cls[count] << " score: "<< score << " (" << xmin << "," << ymin << "," << width << "," << height << ")"<< std::endl;
-      // if (score < 0.5f) continue;
-    
-      // auto id=outputClasses;
-      Object object;
-      object.class_id = cls[count];
-      object.rec.x = xmin;
-      object.rec.y = ymin;
-      object.rec.width = width;
-      object.rec.height = height;
-      object.score = score;
-      objects.push_back(object);
-
-      count+=1;
-    }
-
-    if (wanted_type == kTfLiteFloat32){
-      std::cout << "Float32\n";
-      for (int i = 0; i < scores_size; i++){
-        float value = (scores_[i] - 127) / 127.0;
-        std::cout << value << std::endl;
-      }
-    }
-    else if (wanted_type == kTfLiteUInt8){
-      std::cout << "UInt8\n" << scores_size << std::endl;
-      for (int i = 0; i < scores_size; i++){
-        float value = (float)scores_[i] / 255.0; 
-        std::cout << value << std::endl;
-      }
-    }
-    else{
-      std::cout << "wanted_type is not kTfLiteFloat32 or kTfLiteUInt8\n";
-    }
-    // std::vector<std::pair<float, int>> results;
-
-    // if (wanted_type == kTfLiteFloat32) {
-    //   float *scores = interpreter->typed_output_tensor<float>(0);
-    //   for (int i = 0; i < output_size; ++i) {
-    //     float value = (scores[i] - 127) / 127.0;
-    //     if (value < 0.1)
-    //       continue;
-    //     results.push_back(std::pair<float, int>(value, i));
-    //   }
-    // } else if (wanted_type == kTfLiteUInt8) {
-    //   uint8_t *scores = interpreter->typed_output_tensor<uint8_t>(0);
-    //   for (int i = 0; i < output_size; ++i) {
-    //     float value = (float)scores[i] / 255.0;
-    //     if (value < 0.2)
-    //       continue;
-    //     results.push_back(std::pair<float, int>(value, i));
-    //   }
-    // }
-
-    // std::sort(results.begin(), results.end(),
-    //   [](std::pair<float, int>& x, std::pair<float, int>& y) -> int {
-    //     return x.first > y.first;
-    //   }
-    // );
-
-    // std::cout << "Results size: " << results.size() << std::endl;
-    // for (int i = 0; i < results.size(); i++){
-    //   std::cout << results[i].first << ", " << labels[results[i].second] << std::endl;
-    // }
-
-    // // Put text to frame
-    // n = 0;
-    // for (const auto& result : results) {
-    //   std::stringstream ss;
-    //   ss << result.first << ": " << labels[result.second];
-    //   ftw.putText(frame, ss.str(),  cv::Point(50, 50 + 50 * n), 16,
-    //       cv::Scalar(255,255,255), false);
-    //   if (++n >= 3)
-    //     break;
-    // }
-
+    writer.write(frame_cp);
     // cv::imshow("window", frame);
+    
+    
+    // Press  ESC on keyboard to  exit
+    int c = cv::waitKey(1);
+    if( c == 27 )
+      break;
   }
+
+  cap.release();
   cv::destroyAllWindows();
 
-  // Do any needed cleanup and delete 'delegate'.
-  if (delegate_option){
-    // TfLiteHexagonDelegateDelete( delegate);
-    // TfLiteHexagonTearDown();
-  }
-  else{
-    TfLiteGpuDelegateV2Delete( delegate);
-  }
   return 0;
 }
 
