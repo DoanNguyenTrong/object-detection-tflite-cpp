@@ -1,3 +1,5 @@
 build/
-webcam-detector
+object-detector
 *.avi
+copy_to_local.sh
+run_ipcam.sh

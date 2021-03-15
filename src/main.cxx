@@ -80,7 +80,11 @@ int main(int argc, char const * argv[]) {
     cv::Mat frame;
 
     cap >> frame;
-    
+    // check if we succeeded
+    if (frame.empty()) {
+        cerr << "ERROR! blank frame grabbed\n";
+        break;
+    }
     int state = detector.inference(frame);
     if (state != 0){
       exit(0);
@@ -144,7 +148,6 @@ int main(int argc, char const * argv[]) {
 
   cap.release();
   cv::destroyAllWindows();
-
   return 0;
 }
 
