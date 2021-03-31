@@ -82,7 +82,7 @@ int main(int argc, char const * argv[]) {
     cap >> frame;
     // check if we succeeded
     if (frame.empty()) {
-        cerr << "ERROR! blank frame grabbed\n";
+        std::cerr << "ERROR! blank frame grabbed\n";
         break;
     }
     int state = detector.inference(frame);
